@@ -4,3 +4,5 @@
 .modebar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:12px;background:#09263c;border:1px solid #65a5cb;border-radius:12px;margin:14px 0}.modebar strong{margin-right:6px}.modebar button{background:#123d5d;border-color:#5e9cbd;min-height:44px}.modebar button[aria-pressed="true"]{background:#f4b03e;color:#132c3b;border-color:#ffe09a;box-shadow:0 0 0 2px #fff6}@media(max-width:720px){.modebar{gap:6px;padding:9px}.modebar strong{width:100%}.modebar button{flex:1;font-size:12px;padding:11px 5px}}
 
 #deleteWire[aria-pressed="true"]{background:#b74b2b;border-color:#ffc29e;color:white}#referenceToggle[hidden]{display:none}#attemptStatus{font-weight:650}
+
+.wire-hit{stroke:transparent;stroke-width:30;fill:none;stroke-linecap:round;pointer-events:stroke;cursor:pointer}#deleteWire[aria-pressed="true"]{outline:3px solid #ffd0a7;outline-offset:2px}#referenceBody>div[hidden]{display:none}
