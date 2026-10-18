@@ -30,6 +30,8 @@ Verified deployment commit: 83e5cf561b3d16e6e844464e082122f33f2b118e
 - User reported Delete wire tap reliability and draw-mode interference. Enlarged invisible wire hit areas, made tools mutually exclusive and togglable off; phone validation pending.
 - Removed completed reference drawing from student HTML. After 3 failed tests, show contextual hints only, not a copyable solution. Practice/assessment mode separation planned, not implemented.
 
+- User confirmed on Samsung that the improved touch/deletion controls work well and that guided hints after failed attempts are more useful than a full schematic. Treat this as the approved UX baseline; do not regress.
+
 ## Known limitations / do not claim complete
 - Actual Winn-Marion logo and approved oilfield background artwork not yet integrated (current WM mark is a placeholder).
 - Circuit evaluator is simplified and needs testing for equivalent wiring, faults, and alternate circuits.
