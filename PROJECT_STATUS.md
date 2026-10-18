@@ -4,8 +4,8 @@
 Repository: https://github.com/goransonbradley-98WmA/Winn-Marion-trainer
 Branch: main
 Vercel project: electrical-training-pro (Winn-Marion team)
-Latest verified ready preview: https://electrical-training-hpud75bfr-winn-marion.vercel.app
-Verified deployment commit: e77dd61b4fa147f99b4231d2f8c76b89ac1c4f77
+Latest verified ready preview: https://electrical-training-fs8m2uy49-winn-marion.vercel.app
+Verified deployment commit: 83e5cf561b3d16e6e844464e082122f33f2b118e
 
 ## Saved implementation (as of 2026-10-18)
 - index.html: responsive training site, home, courses, simulator selection, motor-control workspace, and 3D lab placeholder.
@@ -26,6 +26,9 @@ Verified deployment commit: e77dd61b4fa147f99b4231d2f8c76b89ac1c4f77
 - Added explicit one-tap Delete wire mode; double-tap remains fallback.
 - Reference schematic is hidden until three failed tests, with unlock status and toggle.
 - Test attempt outcomes, reasons and timestamps saved in browser localStorage (not student accounts); counts persist locally. Assessment engine is simplified and must be strengthened before grading.
+
+- User reported Delete wire tap reliability and draw-mode interference. Enlarged invisible wire hit areas, made tools mutually exclusive and togglable off; phone validation pending.
+- Removed completed reference drawing from student HTML. After 3 failed tests, show contextual hints only, not a copyable solution. Practice/assessment mode separation planned, not implemented.
 
 ## Known limitations / do not claim complete
 - Actual Winn-Marion logo and approved oilfield background artwork not yet integrated (current WM mark is a placeholder).
