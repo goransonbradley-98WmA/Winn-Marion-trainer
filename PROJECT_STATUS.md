@@ -4,8 +4,8 @@
 Repository: https://github.com/goransonbradley-98WmA/Winn-Marion-trainer
 Branch: main
 Vercel project: electrical-training-pro (Winn-Marion team)
-Latest verified ready preview: https://electrical-training-fy2qu0zol-winn-marion.vercel.app
-Verified deployment commit: 6513bdd3e5efe7fda050299d72972d0af67c3b11
+Latest verified ready preview: https://electrical-training-m7sptle9r-winn-marion.vercel.app
+Verified deployment commit: ec624d391701d4ece19358f4ffd7723763e1b9ee
 
 ## Saved implementation (as of 2026-10-18)
 - index.html: responsive training site, home, courses, simulator selection, motor-control workspace, and 3D lab placeholder.
@@ -17,6 +17,8 @@ Verified deployment commit: 6513bdd3e5efe7fda050299d72972d0af67c3b11
 - Two-finger pinch zoom support and basic direct L1/L2 short detection added; phone behavior still needs user testing.
 
 - Freehand pointer-traced wire geometry is now saved per connection; snaps to target terminals. Samsung device testing pending.
+
+- Explicit Draw wires / Move screen / Move devices interaction modes added to prevent accidental panning while tracing; Samsung confirmation pending.
 
 ## Known limitations / do not claim complete
 - Actual Winn-Marion logo and approved oilfield background artwork not yet integrated (current WM mark is a placeholder).
