@@ -4,8 +4,8 @@
 Repository: https://github.com/goransonbradley-98WmA/Winn-Marion-trainer
 Branch: main
 Vercel project: electrical-training-pro (Winn-Marion team)
-Latest verified ready preview: https://electrical-training-m7sptle9r-winn-marion.vercel.app
-Verified deployment commit: ec624d391701d4ece19358f4ffd7723763e1b9ee
+Latest verified ready preview: https://electrical-training-nuvcdsfjk-winn-marion.vercel.app
+Verified deployment commit: 5b5d77e06a4f877061d3316256e05570284eb0ed
 
 ## Saved implementation (as of 2026-10-18)
 - index.html: responsive training site, home, courses, simulator selection, motor-control workspace, and 3D lab placeholder.
@@ -19,6 +19,9 @@ Verified deployment commit: ec624d391701d4ece19358f4ffd7723763e1b9ee
 - Freehand pointer-traced wire geometry is now saved per connection; snaps to target terminals. Samsung device testing pending.
 
 - Explicit Draw wires / Move screen / Move devices interaction modes added to prevent accidental panning while tracing; Samsung confirmation pending.
+
+- User approved separated draw/pan/device modes as a good baseline on Samsung.
+- Added Save circuit / Load circuit via device-local browser storage, preserving devices, freehand wires and view. Not cross-device or employee-account sync.
 
 ## Known limitations / do not claim complete
 - Actual Winn-Marion logo and approved oilfield background artwork not yet integrated (current WM mark is a placeholder).
