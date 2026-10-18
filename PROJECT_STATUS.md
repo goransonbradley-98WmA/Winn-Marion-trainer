@@ -4,8 +4,8 @@
 Repository: https://github.com/goransonbradley-98WmA/Winn-Marion-trainer
 Branch: main
 Vercel project: electrical-training-pro (Winn-Marion team)
-Latest verified ready preview: https://electrical-training-nuvcdsfjk-winn-marion.vercel.app
-Verified deployment commit: 5b5d77e06a4f877061d3316256e05570284eb0ed
+Latest verified ready preview: https://electrical-training-hpud75bfr-winn-marion.vercel.app
+Verified deployment commit: e77dd61b4fa147f99b4231d2f8c76b89ac1c4f77
 
 ## Saved implementation (as of 2026-10-18)
 - index.html: responsive training site, home, courses, simulator selection, motor-control workspace, and 3D lab placeholder.
@@ -22,6 +22,10 @@ Verified deployment commit: 5b5d77e06a4f877061d3316256e05570284eb0ed
 
 - User approved separated draw/pan/device modes as a good baseline on Samsung.
 - Added Save circuit / Load circuit via device-local browser storage, preserving devices, freehand wires and view. Not cross-device or employee-account sync.
+
+- Added explicit one-tap Delete wire mode; double-tap remains fallback.
+- Reference schematic is hidden until three failed tests, with unlock status and toggle.
+- Test attempt outcomes, reasons and timestamps saved in browser localStorage (not student accounts); counts persist locally. Assessment engine is simplified and must be strengthened before grading.
 
 ## Known limitations / do not claim complete
 - Actual Winn-Marion logo and approved oilfield background artwork not yet integrated (current WM mark is a placeholder).
