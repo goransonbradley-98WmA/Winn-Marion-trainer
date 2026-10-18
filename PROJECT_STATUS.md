@@ -4,8 +4,8 @@
 Repository: https://github.com/goransonbradley-98WmA/Winn-Marion-trainer
 Branch: main
 Vercel project: electrical-training-pro (Winn-Marion team)
-Latest verified ready preview: https://electrical-training-er2bwayrz-winn-marion.vercel.app
-Verified deployment commit: 09e06f940955d34768986254ad298968eb5ac8d6
+Latest verified ready preview: https://electrical-training-h83s3jdh7-winn-marion.vercel.app
+Verified deployment commit: b23a2bcf14e5208f4830eef748811a2af76cbbef
 
 ## Saved implementation (as of 2026-10-18)
 - index.html: responsive training site, home, courses, simulator selection, motor-control workspace, and 3D lab placeholder.
@@ -13,6 +13,8 @@ Verified deployment commit: 09e06f940955d34768986254ad298968eb5ac8d6
 - simulator.js: schematic STOP NC / START NO / coil / auxiliary devices; simulated L1/L2 terminals; touch/pointer wire dragging with snapping; tap-to-connect fallback; device repositioning and double-tap deletion; wire deletion, undo, reset, zoom and pan; simplified START/STOP/seal-in checks.
 - Reference 3-wire motor control ladder schematic displayed above workspace.
 - GitHub commits preserve source; latest preview deployed on Vercel.
+
+- Two-finger pinch zoom support and basic direct L1/L2 short detection added; phone behavior still needs user testing.
 
 ## Known limitations / do not claim complete
 - Actual Winn-Marion logo and approved oilfield background artwork not yet integrated (current WM mark is a placeholder).
