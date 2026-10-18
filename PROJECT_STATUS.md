@@ -4,8 +4,8 @@
 Repository: https://github.com/goransonbradley-98WmA/Winn-Marion-trainer
 Branch: main
 Vercel project: electrical-training-pro (Winn-Marion team)
-Latest verified ready preview: https://electrical-training-h83s3jdh7-winn-marion.vercel.app
-Verified deployment commit: b23a2bcf14e5208f4830eef748811a2af76cbbef
+Latest verified ready preview: https://electrical-training-fy2qu0zol-winn-marion.vercel.app
+Verified deployment commit: 6513bdd3e5efe7fda050299d72972d0af67c3b11
 
 ## Saved implementation (as of 2026-10-18)
 - index.html: responsive training site, home, courses, simulator selection, motor-control workspace, and 3D lab placeholder.
@@ -16,10 +16,12 @@ Verified deployment commit: b23a2bcf14e5208f4830eef748811a2af76cbbef
 
 - Two-finger pinch zoom support and basic direct L1/L2 short detection added; phone behavior still needs user testing.
 
+- Freehand pointer-traced wire geometry is now saved per connection; snaps to target terminals. Samsung device testing pending.
+
 ## Known limitations / do not claim complete
 - Actual Winn-Marion logo and approved oilfield background artwork not yet integrated (current WM mark is a placeholder).
 - Circuit evaluator is simplified and needs testing for equivalent wiring, faults, and alternate circuits.
-- Wire rendering is orthogonal snap routing, not fully arbitrary freehand waypoint drawing.
+- Freehand path capture implemented; smoothing and waypoint editing still pending.
 - Mobile pinch zoom and multi-wire terminal interactions require real-device testing.
 - Transformer, LOTO/meter, lessons, administrator login and Three.js lab are planned, not implemented.
 - The old Vercel-only previews are not the source of truth. Do not overwrite newer GitHub code with older deployment files.
