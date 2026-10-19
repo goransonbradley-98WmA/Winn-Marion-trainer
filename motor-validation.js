@@ -1,0 +1,62 @@
+/* Topology-based 3-wire motor control trainer evaluation (not field-grade electrical analysis). */
+(function(root){
+'use strict';
+const typeSet=new Set(['stop','start','aux','coil']);
+function signature(devices,wires){
+  const parts=devices.filter(d=>typeSet.has(d.type)).map(d=>String(d.id)+':'+d.type).sort();
+  const edges=wires.map(w=>[String(w.a),String(w.b)].sort().join('~')).sort();
+  return JSON.stringify([parts,edges]);
+}
+function evaluate(devices,wires){
+  if(!Array.isArray(devices)||!Array.isArray(wires))return {result:'fail',reason:'invalid circuit',message:'Circuit data could not be evaluated.'};
+  const coils=devices.filter(d=>d.type==='coil');
+  if(coils.length!==1)return {result:'fail',reason:coils.length>1?'multiple coils':'missing components',message:coils.length>1?'Use one M coil for this exercise.':'Add one M coil before testing.'};
+  if(!devices.some(d=>d.type==='stop')||!devices.some(d=>d.type==='start'))
+    return {result:'fail',reason:'missing components',message:'Add STOP NC and START NO before testing.'};
+  const coil=coils[0];
+  function state(startPressed,auxClosed,stopPressed){
+    const adj=new Map();
+    function edge(a,b){
+      if(!adj.has(a))adj.set(a,[]);
+      if(!adj.has(b))adj.set(b,[]);
+      adj.get(a).push(b);adj.get(b).push(a);
+    }
+    wires.forEach(w=>edge(String(w.a),String(w.b)));
+    devices.forEach(d=>{
+      if(d.type==='stop'&&!stopPressed||d.type==='start'&&startPressed||d.type==='aux'&&auxClosed)
+        edge(d.id+':L',d.id+':R');
+    });
+    function reached(from){
+      const visited=new Set([from]),queue=[from];
+      for(let i=0;i<queue.length;i++)for(const next of adj.get(queue[i])||[]){
+        if(!visited.has(next)){visited.add(next);queue.push(next);}
+      }
+      return visited;
+    }
+    const l1=reached('L1'),l2=reached('L2');
+    const short=l1.has('L2');
+    const energized=(l1.has(coil.id+':L')&&l2.has(coil.id+':R'))||
+      (l1.has(coil.id+':R')&&l2.has(coil.id+':L'));
+    return {short,energized};
+  }
+  const idle=state(false,false,false);
+  const start=state(true,false,false);
+  const run=state(false,true,false);
+  const stop=state(false,true,true);
+  const stopWhileStart=state(true,true,true);
+  if([idle,start,run,stop,stopWhileStart].some(s=>s.short))
+    return {result:'fail',reason:'supply short',message:'FAIL: A closed contact creates an L1-to-L2 short that bypasses the coil.'};
+  if(stop.energized||stopWhileStart.energized)
+    return {result:'fail',reason:'unsafe stop',message:'UNSAFE: Pressing STOP must de-energize the coil, even while START is held.'};
+  if(idle.energized)
+    return {result:'fail',reason:'unexpected energization',message:'FAIL: The coil energizes without pressing START. Check the START bypass.'};
+  if(!start.energized)
+    return {result:'fail',reason:'open circuit',message:'OPEN CIRCUIT: Pressing START does not energize the coil. Trace L1 through STOP and START to M and L2.'};
+  if(!devices.some(d=>d.type==='aux')||!run.energized)
+    return {result:'fail',reason:'missing seal-in',message:'PARTIAL PASS: START operates the coil, but it does not stay energized through M AUX when START is released.'};
+  return {result:'pass',reason:'passed',message:'PASS (training model): START energizes M, AUX seals in, STOP releases M, and no direct supply short was found.'};
+}
+const api=Object.freeze({evaluate,signature});
+root.MotorValidation=api;
+if(typeof module!=='undefined'&&module.exports)module.exports=api;
+})(typeof globalThis!=='undefined'?globalThis:this);
