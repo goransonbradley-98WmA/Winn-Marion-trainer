@@ -53,6 +53,10 @@ plate('480V MCC • TRAINING',1.1,3.08,.14,1.10,.16);plate('DANGER • ARC FLASH
 /* Photo-inspired industrial starter cabinet: muted steel, 480 V labeling,
    pilot lights and HOA selector. Procedural geometry is an original training model. */
 const doorSkin=door.children[0];doorSkin.material.color.setHex(0x818a90);doorSkin.material.metalness=.38;doorSkin.material.roughness=.76;
+// Remove legacy MCC bucket graphics from the front face. Preserve the interior
+// terminal models for the open-door voltage verification exercise.
+for(const legacy of [cab.children[2]]){if(legacy)legacy.visible=false}
+for(const item of door.children){if(item.isMesh&&item!==door.children[0]&&item.position.z<.14&&item.position.x>0.20&&item.position.x<2.60&&item.geometry?.type==='BoxGeometry')item.visible=false}
 const doorFace=box(2.48,3.24,.014,1.34,1.80,.072,0x92999d,door);
 doorFace.material.metalness=.25;doorFace.material.roughness=.84;
 const rightControlRail=box(.26,2.15,.15,2.80,1.55,-.03,0x707b83,door);
