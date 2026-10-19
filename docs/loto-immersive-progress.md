@@ -22,3 +22,9 @@ Training prototype only: qualified instructor must validate procedures before fi
 - Replaced flat first-person hand overlay with a lightweight camera-attached 3D gloved hand.
 - Modeled carried padlock, tag, hasp and meter geometry in the hand; reach motion triggered by cabinet interaction.
 - Existing mobile movement and toolbelt retained. Verify on Samsung, especially correct placement detection, visual alignment and safety gating.
+
+## Hands-on disconnect and meter scenario
+- Added external red disconnect lever operated with Hand selection; Next no longer bypasses disconnect isolation.
+- Added labels for disconnect, cabinet and lockout point; visible multimeter, red/black leads and separate known-live source.
+- Meter practice has selectable red and black test points, simulated readout, first/final known-live verification and six phase-to-phase/phase-ground combinations.
+- Pending: touch-to-place 3D probes directly on terminals, full physical door and lever animations, realism/texture pass, instructor safety review and mobile regression testing. All readings are fictional training values.
