@@ -28,6 +28,22 @@ const disconnectBase=box(.46,.87,.16,2.12,2.55,.17,0x313c45,door);
 const disconnectLever=new THREE.Group();disconnectLever.position.set(2.12,2.57,.32);door.add(disconnectLever);
 box(.13,.52,.13,0,.22,0,0xb73527,disconnectLever);
 const disconnectGrip=box(.28,.12,.19,0,.47,.04,0x20252b,disconnectLever);
+/* Recognizable rotary disconnect assembly: dark cast escutcheon, raised shaft,
+   thick molded grip and mounting fasteners. Lever rotates to OFF on interaction. */
+const disconnectHousing=box(.62,1.10,.18,2.12,2.57,.25,0x1b2025,door);
+disconnectHousing.material.roughness=.88;
+const bezel=box(.48,.94,.025,2.12,2.57,.35,0x353d44,door);
+bezel.material.roughness=.75;
+const pivot=new THREE.Mesh(new THREE.CylinderGeometry(.115,.115,.12,28),new THREE.MeshStandardMaterial({color:0x555e66,metalness:.82,roughness:.28}));
+pivot.rotation.x=Math.PI/2;pivot.position.set(0,0,.045);disconnectLever.add(pivot);
+const gripBody=box(.22,.32,.23,0,.40,.13,0x171d22,disconnectLever);
+gripBody.material.roughness=.94;
+const gripRidge=box(.23,.065,.24,0,.52,.15,0x333a40,disconnectLever);
+for(const y of [2.14,3.00])for(const x of [1.88,2.36]){
+ const screw=new THREE.Mesh(new THREE.CylinderGeometry(.025,.025,.012,12),new THREE.MeshStandardMaterial({color:0xbac2c7,metalness:.85}));
+ screw.rotation.x=Math.PI/2;screw.position.set(x,y,.365);door.add(screw);
+}
+
 function plate(label,x,y,z,w=.7,h=.16){const cv=document.createElement('canvas');cv.width=512;cv.height=128;const ctx=cv.getContext('2d');ctx.fillStyle='#f1ede3';ctx.fillRect(0,0,512,128);ctx.fillStyle='#192735';ctx.font='bold 50px sans-serif';ctx.textAlign='center';ctx.fillText(label,256,80);const mesh=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(cv),side:THREE.DoubleSide}));mesh.position.set(x,y,z);door.add(mesh);return mesh}
 plate('DISCONNECT ON / OFF',2.05,3.18,.27,1.13,.20);
 plate('LOCKOUT POINT',1.94,1.47,.36,.85,.16);
