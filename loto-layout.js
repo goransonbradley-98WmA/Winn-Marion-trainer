@@ -26,7 +26,14 @@ window.addEventListener('load',()=>{
   mark();setInterval(mark,350);
  }
  const action=document.getElementById('action');
- if(action){action.textContent='Confirm preparation / normal stop';action.title='Only preparation and normal stop are confirmed here. Operate the physical handle for isolation.'}
+ const procedureBar=document.createElement('div');procedureBar.id='wmProcedureBar';procedureBar.style.cssText='display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:5px';dock.insertBefore(procedureBar,document.getElementById('controls'));
+ for(const id of ['action','door','meter','reset']){const el=document.getElementById(id);if(el){procedureBar.append(el);el.style.cssText='flex:1 1 100px;margin:0;min-height:40px;padding:7px 5px;font-size:12px'}}
+ const note=document.getElementById('message');if(note){dock.insertBefore(note,procedureBar);note.style.cssText='min-height:0;margin:2px;padding:6px;font-size:12px'}
+ // Keep only compact action controls: duplicate large overlay buttons are unnecessary.
+ const extraStyle=document.createElement('style');extraStyle.textContent='#disconnectTouchUI{display:none!important}#wmDock{max-width:100%;overflow:hidden}#wmProcedureBar button{min-width:0}#wmCurrentStep{font-size:12px!important;padding:6px!important}#wmChecklist{padding:2px!important}#wmChecklist summary{padding:3px!important}#scene{height:clamp(310px,48dvh,520px)!important}@media(max-width:700px){#scene{height:39dvh!important;min-height:300px!important}#controls button{font-size:11px!important;padding:6px 2px!important}}';document.head.append(extraStyle);
+ const compactAction=document.createElement('button');compactAction.type='button';compactAction.id='wmOperate';compactAction.textContent='✋ Operate handle';compactAction.style.cssText='flex:1 1 100px;min-height:40px;margin:0;padding:7px 5px;font-size:12px';compactAction.onclick=()=>document.getElementById('operateDisconnect')?.click();procedureBar.append(compactAction);
+ const compactPlace=document.createElement('button');compactPlace.type='button';compactPlace.textContent='⛓ Place tool';compactPlace.style.cssText=compactAction.style.cssText;compactPlace.onclick=()=>document.getElementById('placeSelected')?.click();procedureBar.append(compactPlace);
+ if(action){action.textContent='Confirm current step';action.title='Only preparation and normal stop are confirmed here. Operate the physical handle for isolation.'}
  // Keep meter details available but collapsed to reduce scrolling.
  const meterPanel=document.getElementById('meterPanel');
  if(meterPanel){
