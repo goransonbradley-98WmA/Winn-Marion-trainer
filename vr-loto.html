@@ -55,7 +55,7 @@ plate('480V MCC • TRAINING',1.1,3.08,.14,1.10,.16);plate('DANGER • ARC FLASH
 const doorSkin=door.children[0];doorSkin.material.color.setHex(0x818a90);doorSkin.material.metalness=.38;doorSkin.material.roughness=.76;
 // Remove legacy MCC bucket graphics from the front face. Preserve the interior
 // terminal models for the open-door voltage verification exercise.
-for(const legacy of [cab.children[2]]){if(legacy)legacy.visible=false}
+// The old opaque front plate and the legacy three MCC bucket fronts are not part of the new door.\nif(cab.children[1])cab.children[1].visible=false;\nfor(let i=2;i<=7;i++)if(cab.children[i])cab.children[i].visible=false;
 for(const item of door.children){if(item.isMesh&&item!==door.children[0]&&item.position.z<.14&&item.position.x>0.20&&item.position.x<2.60&&item.geometry?.type==='BoxGeometry')item.visible=false}
 const doorFace=box(2.48,3.24,.014,1.34,1.80,.072,0x92999d,door);
 doorFace.material.metalness=.25;doorFace.material.roughness=.84;
