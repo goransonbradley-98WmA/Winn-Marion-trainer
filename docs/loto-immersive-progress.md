@@ -17,3 +17,8 @@
 - Link progress to authenticated employee records when account system is built.
 
 Training prototype only: qualified instructor must validate procedures before field use.
+
+## 3D hand iteration
+- Replaced flat first-person hand overlay with a lightweight camera-attached 3D gloved hand.
+- Modeled carried padlock, tag, hasp and meter geometry in the hand; reach motion triggered by cabinet interaction.
+- Existing mobile movement and toolbelt retained. Verify on Samsung, especially correct placement detection, visual alignment and safety gating.
