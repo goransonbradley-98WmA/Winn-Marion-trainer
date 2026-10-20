@@ -98,3 +98,21 @@ window.addEventListener('load', () => {
   `;
   document.head.append(style);
 });
+
+/* Guided procedure bridge: retains all existing 3D controls and their handlers.
+   Only observed actions are recorded; checklist never certifies a voltage test
+   based solely on entering the meter panel. */
+window.addEventListener('load',()=>{
+ if(!new URLSearchParams(location.search).has('guided'))return;
+ const KEY='wm-loto-session-v1';
+ const session=()=>{try{return JSON.parse(localStorage.getItem(KEY)||'{}')}catch{return {}}};
+ function record(id){const s=session();s.events=Array.isArray(s.events)?s.events:[];if(!s.events.includes(id)){s.events.push(id);localStorage.setItem(KEY,JSON.stringify(s))}status();}
+ const dock=document.getElementById('wmDock');if(!dock)return;
+ const nav=document.createElement('div');nav.style.cssText='padding:9px;border:1px solid #527b98;border-radius:9px;background:#15374f;display:flex;flex-wrap:wrap;align-items:center;gap:8px';
+ nav.innerHTML='<strong>Guided LOTO session</strong><span id="wmGuideStatus" style="flex:1;font-size:12px"></span><a href="/loto-procedure.html" style="background:#1774ad;color:white;padding:10px;border-radius:8px">← Return to checklist</a>';
+ dock.prepend(nav);
+ function status(){const s=session(),events=s.events||[];document.getElementById('wmGuideStatus').textContent=['off','lock','door','meter'].filter(x=>events.includes(x)).length+'/4 physical milestones recorded · complete required meter tests before return';}
+ status();
+ const msg=document.getElementById('message');if(msg){const obs=new MutationObserver(()=>{const t=msg.textContent.toLowerCase();if(/disconnect off/.test(t))record('off');if(/cabinet open|door open/.test(t))record('door');if(/lock.*placed|hasp.*placed|tag.*placed/.test(t)){const s=session();s.hardware=s.hardware||[];if(/lock.*placed/.test(t))s.hardware.push('lock');if(/hasp.*placed/.test(t))s.hardware.push('hasp');if(/tag.*placed/.test(t))s.hardware.push('tag');s.hardware=[...new Set(s.hardware)];localStorage.setItem(KEY,JSON.stringify(s));if(['lock','hasp','tag'].every(x=>s.hardware.includes(x)))record('lock')}});obs.observe(msg,{childList:true,characterData:true,subtree:true})}
+ const probe=document.getElementById('probeStatus');if(probe){const obs=new MutationObserver(()=>{const t=probe.textContent.toLowerCase();if(/reprov|re-verif|recheck/.test(t)&&/meter|known|live/.test(t))record('meter')});obs.observe(probe,{childList:true,characterData:true,subtree:true})}
+});
