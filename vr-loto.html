@@ -59,6 +59,21 @@ box(.13,.52,.13,0,.22,0,0xb73527,disconnectLever);
 const disconnectGrip=box(.34,.15,.23,0,.47,.08,0x20252b,disconnectLever);
 /* Recognizable rotary disconnect assembly: dark cast escutcheon, raised shaft,
    thick molded grip and mounting fasteners. Lever rotates to OFF on interaction. */
+// Photo reference: Allen-Bradley right-edge flange handle, black with green grip.
+// The lockout hole is illustrative until its actual mechanism is verified in person.
+disconnectBase.visible=false;
+disconnectGrip.visible=false;
+for(const part of disconnectLever.children){if(part.isMesh)part.visible=false}
+const wmHandlePivot=new THREE.Group();wmHandlePivot.position.set(2.77,2.66,.34);door.add(wmHandlePivot);
+box(.18,.26,.12,0,.01,0,0x161b20,wmHandlePivot);
+const wmHandleArm=box(.21,.72,.22,0,-.38,.12,0x11161c,wmHandlePivot);wmHandleArm.material.roughness=.85;
+box(.16,.23,.024,0,-.56,.245,0x52b98a,wmHandlePivot);
+const wmHandlePlate=box(.29,.85,.08,2.77,2.57,.23,0x20262b,door);
+const wmOnLabel=plate('ON',2.77,2.95,.281,.20,.11);
+const wmOffLabel=plate('OFF',2.77,2.82,.281,.20,.11);
+const wmLockoutEar=box(.12,.17,.12,2.66,2.39,.39,0x454e55,door);
+wmLockoutEar.visible=false;
+const wmPhotoControls=()=>{wmHandlePivot.rotation.z=step>=3?-.85:0;wmLockoutEar.visible=step>=3;};
 const disconnectHousing=box(.72,1.17,.22,2.12,2.57,.25,0x1b2025,door);disconnectHousing.visible=true;
 disconnectHousing.material.roughness=.88;
 const bezel=box(.48,.94,.025,2.12,2.57,.35,0x353d44,door);bezel.visible=true;
@@ -160,7 +175,7 @@ document.getElementById('immersiveRed').onclick=()=>selectProbe('red');document.
 document.getElementById('immersiveStow').onclick=()=>{meterHeld=false;meterHud.classList.remove('active');window.wmHand?.equip('hand')};selectProbe('red');
 // Screen-space targets stay consistent with the actual rendered disconnect.
 function disconnectTouch(e){door.updateWorldMatrix(true,true);camera.updateMatrixWorld();const p=disconnectGrip.getWorldPosition(new THREE.Vector3()).project(camera),b=renderer.domElement.getBoundingClientRect();const x=b.left+(p.x+1)*b.width/2,y=b.top+(1-p.y)*b.height/2;return {distance:Math.hypot(e.clientX-x,e.clientY-y),x,y};}
-function switchOff(){if(step<2){msg.textContent='First complete notification and normal stop using Continue below. Then touch the disconnect handle.';return true}if(step===2){step=3;update();msg.textContent='Handle moved to OFF. Select Hasp, then tap the handle lockout point.';return true}msg.textContent='Disconnect is already OFF. Attach the hasp, then lock, then tag.';return true}
+function switchOff(){if(step<2){msg.textContent='First complete notification and normal stop using Continue below. Then touch the disconnect handle.';return true}if(step===2){step=3;update();wmPhotoControls();msg.textContent='Handle moved to OFF. Select Hasp, then tap the handle lockout point.';return true}msg.textContent='Disconnect is already OFF. Attach the hasp, then lock, then tag.';return true}
 const sceneTargets=[{object:isolation,type:'lockPoint'},{object:door.children[0],type:'cabinetDoor'},{object:door.children[1],type:'cabinetDoor'},{object:handle,type:'cabinetDoor'},{object:disconnectGrip,type:'disconnect'},{object:disconnectLever,type:'disconnect'},{object:disconnectBase,type:'disconnect'},{object:benchMeter,type:'meter'},{object:liveTerminal1,type:'liveL'},{object:liveTerminal2,type:'liveN'},...Object.entries(terminals).map(([type,object])=>({object,type}))];
 function sceneTap(e){if(disconnectTouch(e).distance<110)return switchOff();const bounds=renderer.domElement.getBoundingClientRect();pointer.set((e.clientX-bounds.left)/bounds.width*2-1,-(e.clientY-bounds.top)/bounds.height*2+1);raycaster.setFromCamera(pointer,camera);const hits=raycaster.intersectObjects(sceneTargets.map(x=>x.object),true).filter(h=>h.object.visible&&h.object.parent?.visible!==false);if(!hits.length)return false;const hit=sceneTargets.find(t=>{let o=hits[0].object;while(o){if(o===t.object)return true;o=o.parent}return false});if(!hit)return false;if(hit.type==='disconnect')return switchOff();if(hit.type==='cabinetDoor'){if(step<3){msg.textContent='Switch the disconnect OFF first.';return true}document.getElementById('door').click();return true}if(hit.type==='meter'){showMeter();return true}if(hit.type==='liveL'||hit.type==='liveN'||terminals[hit.type]){if(terminals[hit.type]&&!opened){msg.textContent='Open the isolated cabinet before testing.';return true}setProbe(hit.type);return true}return false}
 window.wmSceneTap=sceneTap;window.wmPickMeter=showMeter;
@@ -180,7 +195,7 @@ const uiStyle=document.createElement('style');uiStyle.textContent=`
 #disconnectTouchUI #grabMeter{background:#384b59}
 @media(max-width:800px){#disconnectTouchUI{top:95px;width:min(55%,240px);left:12px;transform:none}#disconnectTouchUI button{font-size:11px;padding:6px 5px}#lockoutItems{flex-wrap:wrap;gap:3px}#lockoutPreview{font-size:10px}}
 `;document.head.append(uiStyle);
-function syncLockoutUI(){document.getElementById('operateDisconnect').textContent=step>=3?'✋ Disconnect · OFF':'✋ Operate disconnect · ON';for(const [id,placed] of [['haspPreview',haspPlaced],['lockPreview',lockPlaced],['tagPreview',tagPlaced]])document.getElementById(id).classList.toggle('placed',placed);document.getElementById('lockoutInstruction').textContent=step<3?'Complete preparation and normal stop, then operate disconnect.':!haspPlaced?'Select Hasp, then tap handle or the hasp placement button.':!lockPlaced?'Hasp visible. Select Lock and tap handle.':!tagPlaced?'Lock visible. Select Tag and tap handle.':'Hasp, lock and tag installed on handle.'}
+function syncLockoutUI(){wmPhotoControls();document.getElementById('operateDisconnect').textContent=step>=3?'✋ Disconnect · OFF':'✋ Operate disconnect · ON';for(const [id,placed] of [['haspPreview',haspPlaced],['lockPreview',lockPlaced],['tagPreview',tagPlaced]])document.getElementById(id).classList.toggle('placed',placed);document.getElementById('lockoutInstruction').textContent=step<3?'Complete preparation and normal stop, then operate disconnect.':!haspPlaced?'Select Hasp, then tap handle or the hasp placement button.':!lockPlaced?'Hasp visible. Select Lock and tap handle.':!tagPlaced?'Lock visible. Select Tag and tap handle.':'Hasp, lock and tag installed on handle.'}
 document.getElementById('operateDisconnect').onclick=()=>{switchOff();syncLockoutUI()};
 document.getElementById('placeSelected').onclick=()=>{const tool=window.wmSelectedTool;if(!['hasp','lock','tag'].includes(tool)){msg.textContent='Select Hasp, Lock or Tag first.';return}const p=disconnectGrip.getWorldPosition(new THREE.Vector3()).project(camera),b=renderer.domElement.getBoundingClientRect();window.wmLoto.interact(tool,{clientX:b.left+(p.x+1)*b.width/2,clientY:b.top+(1-p.y)*b.height/2});syncLockoutUI()};
 document.getElementById('grabMeter').onclick=()=>{showMeter();msg.textContent='Meter picked up. Use AC V and the red/black probe selectors.'};
