@@ -10,7 +10,7 @@ window.addEventListener('load', () => {
 
   const title = document.createElement('div');
   title.id = 'wmPracticeTitle';
-  title.innerHTML = '<strong>Lock placement practice</strong><span>Touch the black disconnect handle to switch OFF. Select Lock, then tap the padlock opening beside the handle. No checklist.</span>';
+  title.innerHTML = '<strong>LOTO & voltage practice</strong><span>Operate the disconnect, attach your lock, open the cabinet door, and practice simulated meter checks. No written-step checklist.</span>';
   dock.append(title);
 
   // Preserve the simulator's original message element and its event listeners.
@@ -22,6 +22,28 @@ window.addEventListener('load', () => {
   const hud = document.getElementById('wmHud');
   if (hud) dock.append(hud);
 
+  // Keep the new door and simulated meter controls below the 3D viewport.
+  // Moving the existing elements preserves their event handlers.
+  const doorActions=document.createElement('div');
+  doorActions.id='wmDoorActions';
+  const doorButton=document.getElementById('door');
+  if(doorButton){doorButton.textContent='Open cabinet door';doorActions.append(doorButton);}
+  dock.append(doorActions);
+  const voltageLab=document.createElement('details');
+  voltageLab.id='wmVoltageLab';
+  voltageLab.innerHTML='<summary>Simulated voltage testing · open meter panel</summary><p class="wmSafetyNote">Training model only: 480/277 V WYE supply is simulated. Incoming LINE terminals remain energized with the disconnect OFF. Live electrical testing requires qualified personnel and site-approved safe work practices.</p>';
+  const meterButton=document.getElementById('meter');
+  const meterPanel=document.getElementById('meterPanel');
+  const meterHud=document.getElementById('immersiveMeter');
+  if(meterButton)voltageLab.append(meterButton);
+  if(meterHud)voltageLab.append(meterHud);
+  if(meterPanel)voltageLab.append(meterPanel);
+  dock.append(voltageLab);
+  const meterTool=dock.querySelector('[data-tool="meter"]');
+  if(meterTool)meterTool.addEventListener('click',()=>{
+    voltageLab.open=true;
+    window.wmPickMeter?.();
+  });
   const reset = document.getElementById('reset');
   if (reset) {
     reset.textContent = 'Restart practice';
@@ -32,10 +54,8 @@ window.addEventListener('load', () => {
   // the lock-placement exercise. No step sequence or progress gate is shown.
   aside.hidden = true;
 
-  const meterTool = dock.querySelector('[data-tool="meter"]');
-  if (meterTool) meterTool.hidden = true;
   const hint = document.getElementById('wmHint');
-  if (hint) hint.textContent = 'Hand: operate disconnect · Lock/Hasp/Tag: touch lockout point';
+  if (hint) hint.textContent = 'Hand: operate handle and door · Lock: tap the marked point · Meter: test terminals';
 
   // No other controls or step overlays are allowed to cover the rendered cabinet.
   const style = document.createElement('style');
@@ -58,7 +78,19 @@ window.addEventListener('load', () => {
   #wmDock #wmKnob{left:24px!important;top:24px!important;width:26px!important;height:26px!important}
   #wmDock #wmTools{display:flex!important;position:static!important;max-width:none!important;gap:5px;flex:1;justify-content:flex-end;flex-wrap:wrap;transform:none!important}
   #wmDock #wmTools button{flex:1 1 75px;min-height:44px;font-size:12px!important;min-width:0}
-  #wmDock [data-tool="meter"]{display:none!important}
+  #wmDoorActions{display:flex;gap:6px;flex-wrap:wrap}
+  #wmDoorActions button{flex:1;min-height:44px;font-size:13px;margin:0!important}
+  #wmVoltageLab{padding:7px;border:1px solid #527b98;border-radius:8px;background:#162f43}
+  #wmVoltageLab summary{padding:7px 4px;cursor:pointer;font-weight:700;color:#dbecff}
+  #wmVoltageLab button{min-height:42px}
+  #wmVoltageLab select{min-height:42px;max-width:100%;background:#e9f0f4;color:#152638;border:1px solid #7894a9;border-radius:6px;padding:4px;font:inherit}
+  #wmVoltageLab label{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin:7px 0}
+  #wmVoltageLab #meterPanel{margin-top:8px!important}
+  .wmSafetyNote{font-size:12px;line-height:1.35;color:#ffd991;margin:4px 1px}
+  #wmDock #immersiveMeter{position:static!important;inset:auto!important;transform:none!important;width:auto!important;max-width:none!important;margin:7px 0!important}
+  #wmDock #immersiveMeter.active{display:block!important}
+  #wmDock #immersiveMeter .meterActions{gap:6px}
+  #wmDock #immersiveMeter .meterActions button{min-height:40px;flex:1}
   #wmDock #wmHand,#wmDock #wmCarry{display:none!important}
   #wmDock #reset{align-self:end;min-height:38px;font-size:12px!important;margin:0!important;padding:7px 12px!important}
   aside[hidden]{display:none!important}
