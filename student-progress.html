@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#08273d">
+<title>Practice Progress | Winn-Marion Electrical Training Pro</title>
+<style>
+:root{font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#ecf7ff;background:#081c2d}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(155deg,#081c2d,#174c70);min-height:100vh}
+header{padding:17px max(18px,4vw);background:#061826;border-bottom:2px solid #65b5dd;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+header strong{letter-spacing:.07em}header small{display:block;color:#a4d4ed;letter-spacing:.12em;font-size:11px;margin-top:4px}
+a{color:#9edcff}header a{border:1px solid #78b6d5;border-radius:9px;padding:10px 13px;text-decoration:none}
+main{max-width:1100px;margin:auto;padding:22px 16px 55px}
+h1{font-size:clamp(28px,5vw,42px);margin:5px 0 8px}h2{font-size:21px;margin:0 0 15px}
+.lead{color:#d3e6f4;max-width:780px;line-height:1.5}
+.notice{border-left:4px solid #f4b74e;background:#153951;padding:13px 15px;border-radius:8px;line-height:1.45;margin:18px 0}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:20px 0}
+.card,.panel{background:#10334d;border:1px solid #5286a4;border-radius:14px;padding:20px}
+.card strong{font-size:clamp(28px,5vw,39px);display:block;margin:6px 0}.card span{color:#bddbec;font-size:14px}
+.panel{margin:16px 0}.empty{color:#c6dfef;line-height:1.5}
+.bars{display:grid;gap:12px}.row{display:grid;grid-template-columns:minmax(125px,1fr) 2fr 35px;align-items:center;gap:12px;font-size:14px}
+.track{height:13px;border-radius:9px;background:#082235;overflow:hidden}.fill{height:100%;background:#f3b34c;border-radius:9px}
+.tablewrap{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:430px}
+th,td{text-align:left;padding:12px 9px;border-bottom:1px solid #36627d;font-size:14px}
+th{color:#a8d6f0}td{color:#e4f1f9}.pass{color:#87e8b3;font-weight:750}.fail{color:#ffca86;font-weight:750}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin:18px 0}.actions a{background:#196b99;color:white;padding:12px 15px;border-radius:9px;text-decoration:none;font-weight:650}
+footer{color:#afc9d9;font-size:13px;margin-top:25px;line-height:1.5}
+@media(max-width:560px){.row{grid-template-columns:minmax(110px,1fr) 1fr 28px;gap:7px}.card,.panel{padding:15px}main{padding:16px 12px 40px}}
+</style>
+</head>
+<body>
+<header><div><strong>WINN-MARION</strong><small>ELECTRICAL TRAINING PRO · PRACTICE PREVIEW</small></div><a href="/">← Training home</a></header>
+<main>
+<h1>My practice progress</h1>
+<p class="lead">A first look at training progress using the motor-control attempts already saved by this browser. This page reads existing records without changing your circuit, wiring tools, or test results.</p>
+<div class="notice"><strong>Local practice data only.</strong> This is not a verified employee profile or instructor gradebook. Results stay in this browser, may disappear if browser data is cleared, and do not sync between devices. Older attempts may include repeated tests of the same wiring.</div>
+<section class="cards" aria-label="Practice summary">
+<div class="card"><span>Recorded tests</span><strong id="total">—</strong></div>
+<div class="card"><span>Passed tests</span><strong id="passes">—</strong></div>
+<div class="card"><span>Failed tests</span><strong id="failures">—</strong></div>
+<div class="card"><span>Pass rate</span><strong id="rate">—</strong></div>
+</section>
+<section class="panel" aria-labelledby="reasons-title"><h2 id="reasons-title">Troubleshooting focus</h2><div id="reasons" class="bars"></div></section>
+<section class="panel" aria-labelledby="history-title"><h2 id="history-title">Recent motor-control tests</h2><div id="history" class="tablewrap"></div></section>
+<section class="panel" aria-labelledby="workspace-title"><h2 id="workspace-title">Saved circuit</h2><p id="workspace" class="empty">Checking this browser for your saved motor-control circuit…</p></section>
+<div class="actions"><a href="/">Open motor-control training</a><a href="/vr-loto.html">Open LOTO lab</a></div>
+<footer>Training prototype: the current circuit evaluator is simplified and must not be used to certify electrical competence or authorize live work. Employee authentication, unique-attempt detection, server-side records, and instructor reporting remain future work.</footer>
+</main>
+<script>
+(function(){
+'use strict';
+var attemptKey='wm-training-motor-attempts-v1';
+var workspaceKey='wm-training-motor-workspace-v1';
+function set(id,value){document.getElementById(id).textContent=String(value)}
+function node(tag,text,className){var n=document.createElement(tag);if(text!==undefined)n.textContent=String(text);if(className)n.className=className;return n}
+function render(){
+var attempts=[],saved=null,error=false;
+try{
+ var raw=JSON.parse(localStorage.getItem(attemptKey)||'[]');
+ if(Array.isArray(raw))attempts=raw.filter(function(a){return a&&typeof a==='object'&&(a.result==='pass'||a.result==='fail')}).slice(-200);
+ var data=localStorage.getItem(workspaceKey);
+ if(data)saved=JSON.parse(data);
+}catch(e){error=true}
+var pass=attempts.filter(function(a){return a.result==='pass'}).length;
+var fail=attempts.length-pass;
+set('total',attempts.length);set('passes',pass);set('failures',fail);set('rate',attempts.length?Math.round(100*pass/attempts.length)+'%':'—');
+var reasons=document.getElementById('reasons');reasons.replaceChildren();
+var counts={};
+attempts.forEach(function(a){if(a.result==='fail'){var reason=typeof a.reason==='string'&&a.reason.trim()?a.reason.trim().slice(0,60):'unspecified';counts[reason]=(counts[reason]||0)+1}});
+var entries=Object.entries(counts).sort(function(a,b){return b[1]-a[1]}).slice(0,8);
+if(!entries.length)reasons.append(node('p',error?'Browser storage is unavailable.':'No failed tests recorded yet.','empty'));
+entries.forEach(function(entry){
+ var row=node('div',undefined,'row'),label=node('span',entry[0].replace(/\b\w/g,function(c){return c.toUpperCase()})),track=node('div',undefined,'track'),fill=node('div',undefined,'fill');
+ fill.style.width=Math.round(100*entry[1]/Math.max(1,fail))+'%';track.append(fill);row.append(label,track,node('strong',entry[1]));reasons.append(row);
+});
+var history=document.getElementById('history');history.replaceChildren();
+if(!attempts.length){history.append(node('p',error?'Cannot read browser storage.':'No recorded attempts on this device yet. Complete a motor-control circuit and press Test.','empty'))}
+else{
+ var table=node('table'),thead=node('thead'),tr=node('tr');
+ ['Date / time','Result','Troubleshooting result'].forEach(function(s){tr.append(node('th',s))});thead.append(tr);table.append(thead);
+ var tbody=node('tbody');
+ attempts.slice().reverse().slice(0,15).forEach(function(a){
+ var row=node('tr'),date='Unknown date';
+ if(typeof a.at==='string'){var d=new Date(a.at);if(!isNaN(d.getTime()))date=d.toLocaleString()}
+ row.append(node('td',date),node('td',a.result.toUpperCase(),a.result==='pass'?'pass':'fail'),node('td',typeof a.reason==='string'?a.reason.slice(0,100):'Not recorded'));
+ tbody.append(row)
+ });table.append(tbody);history.append(table)
+}
+var status='No saved circuit found in this browser.';
+if(saved&&Array.isArray(saved.devices)&&Array.isArray(saved.wires)){status='Saved motor-control workspace found: '+saved.devices.length+' devices and '+saved.wires.length+' wires. Open the simulator and choose Load circuit to restore it.'}
+if(error)status='Browser storage could not be read. Check browser privacy or storage settings.';
+set('workspace',status)
+}
+render();window.addEventListener('pageshow',render);document.addEventListener('visibilitychange',function(){if(!document.hidden)render()});
+})();
+</script>
+</body></html>
