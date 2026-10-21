@@ -17,7 +17,11 @@ Vercel: electrical-training-pro / Winn-Marion.
 - Portal JavaScript parsed and all 15 route render cases exercised in an isolated DOM stub; local file destinations checked against repository tree.
 - Existing simulator logic, LOTO files, CSS and student progress preserved byte-for-byte from feature baseline.
 - Desktop/mobile CSS breakpoints included. Actual rendered mobile/desktop browser tests could not run: local shell, JavaScript runtime and browser-control runtime time out. Real Samsung/device regression testing remains required.
-- Deployment and commit evidence will be recorded after publishing. READY alone does not establish browser or simulator correctness.
+- Application commit: fbd3933c4d416cf62a820bdb2f5c3da95be87bb2; saved on main and feature/loto-guided-training-oct20.
+- Vercel deployment dpl_FzptTRW2SKyPkDd1Av1ZmZ7U63ro confirmed READY, target production, matching application commit.
+- Test URL: https://electrical-training-jmp0a37m5-winn-marion.vercel.app
+- Stable URL: https://electrical-training-pro-winn-marion.vercel.app
+- Live HTTP checks returned 200 for home, portal.js, motor.html, loto-procedure.html, vr-loto.html and student-progress.html. No rendered browser/device verification was possible. READY and HTTP responses do not establish simulator correctness.
 
 ## Authentication and data limits
 Static source contains no application identity provider or backend. Public role navigation is a preview, not authentication. Student progress and circuits remain on the same browser/origin; deployment-specific URLs do not share localStorage. Instructor rosters, shared reporting and administrator actions are not implemented.
