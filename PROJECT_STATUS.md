@@ -1,3 +1,28 @@
+# Winn-Marion Electrical Training Pro — project status
+
+## Current release — 2026-10-21
+Source: https://github.com/goransonbradley-98WmA/Winn-Marion-trainer
+Baseline: feature/loto-guided-training-oct20 at 07831cc787ed4150f66c8c7e796a743d1f7ceb56 (four commits ahead of main, no missing main commits).
+Vercel: electrical-training-pro / Winn-Marion.
+
+## Implemented
+- Cohesive responsive landing page, six-module catalog and individual course/trainer routes.
+- Student, instructor/trainer and administrator public preview workspaces. Login explicitly says real authentication pending; no passwords collected, session or protected permissions claimed.
+- Dedicated motor.html uses the existing motor workspace markup and unchanged simulator.js, preserving Samsung-approved modes, freehand wiring, one-tap deletion, hints, save/load and practice-history keys.
+- Existing guided LOTO, standalone 3D cabinet, guide preview and student-progress pages linked from the new experience.
+- Transformer connections, basic wiring and automation marked unfinished. Expanded 3D lab, grading, certificates and instructor assignments pending.
+- No instructor names or credentials invented. Training tools are described as trainers; human instructor assignments pending.
+
+## Verification
+- Portal JavaScript parsed and all 15 route render cases exercised in an isolated DOM stub; local file destinations checked against repository tree.
+- Existing simulator logic, LOTO files, CSS and student progress preserved byte-for-byte from feature baseline.
+- Desktop/mobile CSS breakpoints included. Actual rendered mobile/desktop browser tests could not run: local shell, JavaScript runtime and browser-control runtime time out. Real Samsung/device regression testing remains required.
+- Deployment and commit evidence will be recorded after publishing. READY alone does not establish browser or simulator correctness.
+
+## Authentication and data limits
+Static source contains no application identity provider or backend. Public role navigation is a preview, not authentication. Student progress and circuits remain on the same browser/origin; deployment-specific URLs do not share localStorage. Instructor rosters, shared reporting and administrator actions are not implemented.
+
+## Preserved historical baseline
 # Winn-Marion Electrical Training Pro — persistent project baseline
 
 ## Source of truth
