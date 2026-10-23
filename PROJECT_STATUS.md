@@ -1,5 +1,15 @@
 # Winn-Marion Electrical Training Pro — project status
 
+## 2026-10-23 — motor Test integration activated
+- Connected the previously committed `motor-validation-adapter.js` after `motor-validation.js` and unchanged `simulator.js` in `motor.html`. The existing motor-control Test button now uses topology-based evaluation, including STOP-held safety checks and seal-in checks, on the dedicated motor simulator page.
+- The adapter records only one local practice attempt per exact device-ID/connection signature. Retesting the same topology still shows feedback without increasing the attempt count; rewiring changes the signature and can create a new attempt. Legacy records are retained and are not retroactively deduplicated.
+- Preserved `simulator.js`, approved Samsung touch controls, guided hints, saved circuits, portal routes, student-progress page, and LOTO pages unchanged.
+- Verified via isolated JavaScript adapter test: attached Test handler, valid 3-wire circuit passes, identical retest does not add an attempt, and changed wiring adds a second attempt. Confirmed HTML scripts load in dependency order. This is not a full DOM/browser or real-Samsung regression test.
+- Application commit: `7a8e1d0a1d30b37687f9a828ffcab4c6a78366f3` on main.
+- Vercel deployment `dpl_2nLuLXKVizzU1RA2aLddnwMwr21C` confirmed READY, matching application commit.
+- Test URL: https://electrical-training-pt92jl286-winn-marion.vercel.app/motor.html
+- Limitations: circuit evaluation is a training model, not field-grade simulation or certification; no actual employee accounts, cross-device records or instructor gradebook. Deployment readiness and isolated tests do not prove all touch interactions work on a Samsung. New browser origin may have no previous localStorage attempts.
+
 ## Current release — 2026-10-21
 Source: https://github.com/goransonbradley-98WmA/Winn-Marion-trainer
 Baseline: feature/loto-guided-training-oct20 at 07831cc787ed4150f66c8c7e796a743d1f7ceb56 (four commits ahead of main, no missing main commits).
