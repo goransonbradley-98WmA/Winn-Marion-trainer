@@ -1,5 +1,14 @@
 # Winn-Marion Electrical Training Pro — project status
 
+## 2026-10-24 — reject invalid motor wiring graph references
+- Hardened `motor-validation.js` on main: the evaluator now rejects wires connected to nonexistent terminals or to themselves, as well as duplicate device IDs and unsupported device types. This prevents phantom terminals from being silently treated as electrical junctions in the training graph.
+- Ran 13 isolated JavaScript regression scenarios against the updated evaluator: valid three-wire, reversed coil terminals, missing seal-in, open circuit, L1/L2 short, STOP bypass, unexpected energization, nonexistent terminal, self-wire, duplicate device ID, unsupported device, dangling terminal, and missing coil. All 13 matched expected results.
+- Only `motor-validation.js` was modified in the application. Existing Samsung touch controls, `simulator.js`, guided hints, saved circuits, local attempt tracking, portal and separate simulator pages were not changed.
+- Application commit: `cdcd8be962b72e70eefcb2201db0c0705c093a1e` on main.
+- Vercel deployment `dpl_2WHbtEZVNNP63oNixKQvcRewewHV` confirmed READY and matched that application commit.
+- Test URL: https://electrical-training-n20d3ders-winn-marion.vercel.app/motor.html
+- Limitations: tests exercised the pure JavaScript evaluator, not the full DOM/browser or a Samsung device. The evaluator is a simplified educational model, not a certified safety check. Practice data is still browser-local and role navigation is a public preview.
+
 ## 2026-10-23 — motor Test integration activated
 - Connected the previously committed `motor-validation-adapter.js` after `motor-validation.js` and unchanged `simulator.js` in `motor.html`. The existing motor-control Test button now uses topology-based evaluation, including STOP-held safety checks and seal-in checks, on the dedicated motor simulator page.
 - The adapter records only one local practice attempt per exact device-ID/connection signature. Retesting the same topology still shows feedback without increasing the attempt count; rewiring changes the signature and can create a new attempt. Legacy records are retained and are not retroactively deduplicated.
