@@ -9,6 +9,26 @@ function signature(devices,wires){
 }
 function evaluate(devices,wires){
   if(!Array.isArray(devices)||!Array.isArray(wires))return {result:'fail',reason:'invalid circuit',message:'Circuit data could not be evaluated.'};
+  // Reject invalid graph endpoints instead of treating phantom terminals as junctions.
+  const validTypes=new Set(['stop','start','aux','coil']);
+  const terminals=new Set(['L1','L2']);
+  const seenIds=new Set();
+  for(const d of devices){
+    if(!d||!validTypes.has(d.type)||!(typeof d.id==='string'||typeof d.id==='number')||
+       !String(d.id).trim()||String(d.id).includes(':')||seenIds.has(String(d.id))){
+      return {result:'fail',reason:'invalid circuit',message:'INVALID CIRCUIT: Check device types and duplicate or missing device IDs.'};
+    }
+    seenIds.add(String(d.id));
+    terminals.add(d.id+':L');terminals.add(d.id+':R');
+  }
+  for(const w of wires){
+    if(!w||typeof w.a!=='string'&&typeof w.a!=='number'||
+       typeof w.b!=='string'&&typeof w.b!=='number'||
+       !terminals.has(String(w.a))||!terminals.has(String(w.b))||
+       String(w.a)===String(w.b)){
+      return {result:'fail',reason:'invalid terminal',message:'INVALID WIRING: A wire references a missing terminal or connects a terminal to itself. Remove the invalid wire.'};
+    }
+  }
   const coils=devices.filter(d=>d.type==='coil');
   if(coils.length!==1)return {result:'fail',reason:coils.length>1?'multiple coils':'missing components',message:coils.length>1?'Use one M coil for this exercise.':'Add one M coil before testing.'};
   if(!devices.some(d=>d.type==='stop')||!devices.some(d=>d.type==='start'))
