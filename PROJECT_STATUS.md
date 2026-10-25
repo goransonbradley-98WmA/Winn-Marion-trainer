@@ -1,5 +1,17 @@
 # Winn-Marion Electrical Training Pro — project status
 
+## 2026-10-25 — reproducible motor validation tests and clearer student progress
+- Added `tests/motor-validation.test.js` on main (commit `dbce911af140299542db24a42e6fcd0aad7f6795`), a dependency-free Node test suite covering valid equivalent three-wire circuits, STOP bypass, supply short, missing seal-in, open circuits, malformed device/wire references, missing devices, stable wiring signatures and input immutability.
+- Ran all 21 scenarios against the current `motor-validation.js` source in an isolated JavaScript harness: 21 passed, 0 failed. The committed test suite can also be run with `node --test tests/motor-validation.test.js`. This is evaluator-level testing, not a browser/device integration test.
+- Improved `student-progress.html` (commit `5cc76e2178114e4a591290b4feb54d160d44e4ba`): shows count of distinct circuits among newer signature-bearing attempts, clarifies that older attempts may contain duplicates, and links directly to `motor.html` rather than the home page. Existing practice data remains unchanged and browser-local.
+- Validated the progress-page JavaScript syntax and exercised a simulated DOM with mixed legacy/new attempt records (four tests, two distinct signed circuits) and an empty record set. Displayed counts matched expectations.
+- Existing `simulator.js`, `motor-validation.js`, `motor-validation-adapter.js`, Samsung-approved touch controls, guided hints, saved circuits, LOTO and course pages were not modified in this run.
+- Vercel deployment `dpl_pyidVLufRnCSc2VvSTWW836g13e8` confirmed READY in production, with Git source `main` at application commit `5cc76e2178114e4a591290b4feb54d160d44e4ba`. Stable alias is mapped to this deployment.
+- Verified test URL: https://electrical-training-263jrqq1w-winn-marion.vercel.app/student-progress.html
+- Stable URL (recommended for preserving browser-local progress across deployments): https://electrical-training-pro-winn-marion.vercel.app/student-progress.html
+- Limitations: Vercel READY was verified, but direct HTTP/browser access and real Samsung touch regression were not independently verified. Employee authentication, cross-device progress, and instructor gradebook are still unimplemented. The evaluator is an educational training model, not field-grade electrical validation.
+
+
 ## 2026-10-24 — reject invalid motor wiring graph references
 - Hardened `motor-validation.js` on main: the evaluator now rejects wires connected to nonexistent terminals or to themselves, as well as duplicate device IDs and unsupported device types. This prevents phantom terminals from being silently treated as electrical junctions in the training graph.
 - Ran 13 isolated JavaScript regression scenarios against the updated evaluator: valid three-wire, reversed coil terminals, missing seal-in, open circuit, L1/L2 short, STOP bypass, unexpected energization, nonexistent terminal, self-wire, duplicate device ID, unsupported device, dangling terminal, and missing coil. All 13 matched expected results.
