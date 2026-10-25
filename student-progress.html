@@ -34,18 +34,19 @@ footer{color:#afc9d9;font-size:13px;margin-top:25px;line-height:1.5}
 <main>
 <h1>My practice progress</h1>
 <p class="lead">A first look at training progress using the motor-control attempts already saved by this browser. This page reads existing records without changing your circuit, wiring tools, or test results.</p>
-<div class="notice"><strong>Local practice data only.</strong> This is not a verified employee profile or instructor gradebook. Results stay in this browser, may disappear if browser data is cleared, and do not sync between devices. Older attempts may include repeated tests of the same wiring.</div>
+<div class="notice"><strong>Local practice data only.</strong> This is not a verified employee profile or instructor gradebook. Results stay in this browser, may disappear if browser data is cleared, and do not sync between devices. Older attempts may include repeated tests of the same wiring. Distinct-circuit counts include only newer attempts that carry a wiring signature.</div>
 <section class="cards" aria-label="Practice summary">
 <div class="card"><span>Recorded tests</span><strong id="total">—</strong></div>
 <div class="card"><span>Passed tests</span><strong id="passes">—</strong></div>
 <div class="card"><span>Failed tests</span><strong id="failures">—</strong></div>
 <div class="card"><span>Pass rate</span><strong id="rate">—</strong></div>
+<div class="card"><span>Tracked distinct circuits</span><strong id="unique">—</strong></div>
 </section>
 <section class="panel" aria-labelledby="reasons-title"><h2 id="reasons-title">Troubleshooting focus</h2><div id="reasons" class="bars"></div></section>
 <section class="panel" aria-labelledby="history-title"><h2 id="history-title">Recent motor-control tests</h2><div id="history" class="tablewrap"></div></section>
 <section class="panel" aria-labelledby="workspace-title"><h2 id="workspace-title">Saved circuit</h2><p id="workspace" class="empty">Checking this browser for your saved motor-control circuit…</p></section>
-<div class="actions"><a href="/">Open motor-control training</a><a href="/vr-loto.html">Open LOTO lab</a></div>
-<footer>Training prototype: the current circuit evaluator is simplified and must not be used to certify electrical competence or authorize live work. Employee authentication, unique-attempt detection, server-side records, and instructor reporting remain future work.</footer>
+<div class="actions"><a href="/motor.html">Open motor-control training</a><a href="/vr-loto.html">Open LOTO lab</a></div>
+<footer>Training prototype: the current circuit evaluator is simplified and must not be used to certify electrical competence or authorize live work. Newer motor-control tests avoid duplicate attempts for an identical wiring signature; legacy records may contain repeats. Employee authentication, server-side records, and instructor reporting remain future work.</footer>
 </main>
 <script>
 (function(){
@@ -65,6 +66,8 @@ try{
 var pass=attempts.filter(function(a){return a.result==='pass'}).length;
 var fail=attempts.length-pass;
 set('total',attempts.length);set('passes',pass);set('failures',fail);set('rate',attempts.length?Math.round(100*pass/attempts.length)+'%':'—');
+var signatures=new Set(attempts.filter(function(a){return typeof a.signature==='string'&&a.signature.length>0}).map(function(a){return a.signature}));
+set('unique',signatures.size||'—');
 var reasons=document.getElementById('reasons');reasons.replaceChildren();
 var counts={};
 attempts.forEach(function(a){if(a.result==='fail'){var reason=typeof a.reason==='string'&&a.reason.trim()?a.reason.trim().slice(0,60):'unspecified';counts[reason]=(counts[reason]||0)+1}});
