@@ -1,5 +1,15 @@
 # Winn-Marion Electrical Training Pro — project status
 
+## 2026-10-25 — optional student practice history export
+- Updated `student-progress.html` to add an explicit, user-triggered JSON download of up to 200 valid locally stored motor-control attempts, with export timestamp and format version. No upload, backend, or instructor access is implied.
+- Existing browser-local data, simulator scripts, Samsung-approved touch modes, guided hints, save/load, motor evaluator and LOTO modules were not changed.
+- Application commit: `e9c25c77a697ce1ea5d1107c6e9970ddaaa7d4be` on main.
+- Vercel production deployment `dpl_BwGa6wXxuxra2KDjoQ6CLH7TzQuC` confirmed READY with matching GitHub SHA.
+- Verified deployment URL: https://electrical-training-3dr5sb4zm-winn-marion.vercel.app/student-progress.html
+- Stable origin URL (recommended for existing browser-local history): https://electrical-training-pro-winn-marion.vercel.app/student-progress.html
+- Limitations: READY and source review do not constitute a rendered browser or Samsung export/download test. JSON is an informal practice record, not an authenticated grade or certification. Future instructor reporting requires secure accounts and consented server-side storage.
+
+
 ## 2026-10-25 — reproducible motor validation tests and clearer student progress
 - Added `tests/motor-validation.test.js` on main (commit `dbce911af140299542db24a42e6fcd0aad7f6795`), a dependency-free Node test suite covering valid equivalent three-wire circuits, STOP bypass, supply short, missing seal-in, open circuits, malformed device/wire references, missing devices, stable wiring signatures and input immutability.
 - Ran all 21 scenarios against the current `motor-validation.js` source in an isolated JavaScript harness: 21 passed, 0 failed. The committed test suite can also be run with `node --test tests/motor-validation.test.js`. This is evaluator-level testing, not a browser/device integration test.
