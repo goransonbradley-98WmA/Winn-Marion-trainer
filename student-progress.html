@@ -24,7 +24,7 @@ h1{font-size:clamp(28px,5vw,42px);margin:5px 0 8px}h2{font-size:21px;margin:0 0 
 .tablewrap{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:430px}
 th,td{text-align:left;padding:12px 9px;border-bottom:1px solid #36627d;font-size:14px}
 th{color:#a8d6f0}td{color:#e4f1f9}.pass{color:#87e8b3;font-weight:750}.fail{color:#ffca86;font-weight:750}
-.actions{display:flex;gap:12px;flex-wrap:wrap;margin:18px 0}.actions a{background:#196b99;color:white;padding:12px 15px;border-radius:9px;text-decoration:none;font-weight:650}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin:18px 0}.actions a,.actions button{background:#196b99;color:white;padding:12px 15px;border-radius:9px;text-decoration:none;font-weight:650;border:0;font:inherit;cursor:pointer}
 footer{color:#afc9d9;font-size:13px;margin-top:25px;line-height:1.5}
 @media(max-width:560px){.row{grid-template-columns:minmax(110px,1fr) 1fr 28px;gap:7px}.card,.panel{padding:15px}main{padding:16px 12px 40px}}
 </style>
@@ -45,7 +45,7 @@ footer{color:#afc9d9;font-size:13px;margin-top:25px;line-height:1.5}
 <section class="panel" aria-labelledby="reasons-title"><h2 id="reasons-title">Troubleshooting focus</h2><div id="reasons" class="bars"></div></section>
 <section class="panel" aria-labelledby="history-title"><h2 id="history-title">Recent motor-control tests</h2><div id="history" class="tablewrap"></div></section>
 <section class="panel" aria-labelledby="workspace-title"><h2 id="workspace-title">Saved circuit</h2><p id="workspace" class="empty">Checking this browser for your saved motor-control circuit…</p></section>
-<div class="actions"><a href="/motor.html">Open motor-control training</a><a href="/vr-loto.html">Open LOTO lab</a></div>
+<div class="actions"><a href="/motor.html">Open motor-control training</a><a href="/vr-loto.html">Open LOTO lab</a><button id="exportPractice" type="button">Export my practice results (JSON)</button></div><p id="exportStatus" class="empty" role="status">Export is optional and stays on your device until you choose to share the file. It is not an instructor grade report.</p>
 <footer>Training prototype: the current circuit evaluator is simplified and must not be used to certify electrical competence or authorize live work. Newer motor-control tests avoid duplicate attempts for an identical wiring signature; legacy records may contain repeats. Employee authentication, server-side records, and instructor reporting remain future work.</footer>
 </main>
 <script>
@@ -95,6 +95,21 @@ if(saved&&Array.isArray(saved.devices)&&Array.isArray(saved.wires)){status='Save
 if(error)status='Browser storage could not be read. Check browser privacy or storage settings.';
 set('workspace',status)
 }
+document.getElementById('exportPractice').addEventListener('click',function(){
+ var status=document.getElementById('exportStatus');
+ try{
+  var parsed=JSON.parse(localStorage.getItem(attemptKey)||'[]');
+  if(!Array.isArray(parsed))throw new Error('Practice records are not an array.');
+  var attempts=parsed.filter(function(a){return a&&typeof a==='object'&&(a.result==='pass'||a.result==='fail')}).slice(-200);
+  var payload={format:'wm-motor-practice-v1',exportedAt:new Date().toISOString(),source:'browser-local',attempts:attempts};
+  var blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  var url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download='wm-motor-practice-'+new Date().toISOString().slice(0,10)+'.json';
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(function(){URL.revokeObjectURL(url)},1000);
+  status.textContent='Practice export prepared. Only share this file with someone you trust.';
+ }catch(e){status.textContent='Unable to export practice records from this browser.'}
+});
 render();window.addEventListener('pageshow',render);document.addEventListener('visibilitychange',function(){if(!document.hidden)render()});
 })();
 </script>
