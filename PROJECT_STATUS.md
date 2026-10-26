@@ -1,5 +1,15 @@
 # Winn-Marion Electrical Training Pro — project status
 
+## 2026-10-26 — independent STOP contact safety validation
+- Hardened `motor-validation.js` so the motor-control evaluator tests each STOP NC device independently, both with START released and held. Previously, testing all STOP contacts as pressed together could incorrectly pass a parallel STOP arrangement where pressing only one STOP failed to release the coil.
+- Added two deterministic regression cases: two STOP contacts in series pass; two STOP contacts in parallel fail as `unsafe stop`. The 21 prior cases also passed, for 23/23 total, executed against the committed source and tests in an isolated JavaScript harness (not a rendered browser test).
+- Application commits on `main`: evaluator `f9297f1b649bc40648550e7f44f5ccc952965187`; tests `e40457e9a02662028c8bf8f9b8bad069e808bc8a`.
+- Vercel production deployment `dpl_EYs8YGvuLdgpF327c63hHZntCHa7` confirmed READY with GitHub source SHA `e40457e9a02662028c8bf8f9b8bad069e808bc8a`.
+- Test link: https://electrical-training-81y452mzt-winn-marion.vercel.app/motor.html
+- Preserved existing `simulator.js`, Samsung-approved touch controls, guided hints, saved circuits, browser-local student progress and export, and separate LOTO/course pages without edits.
+- Limitations: direct HTTP retrieval of the preview through the available web tool failed, and no real Samsung or rendered browser test was completed. READY is deployment/build status, not end-to-end UI verification. This is an educational circuit model, not field-grade safety certification. Employee authentication, cross-device progress and instructor gradebook remain pending.
+
+
 ## 2026-10-25 — optional student practice history export
 - Updated `student-progress.html` to add an explicit, user-triggered JSON download of up to 200 valid locally stored motor-control attempts, with export timestamp and format version. No upload, backend, or instructor access is implied.
 - Existing browser-local data, simulator scripts, Samsung-approved touch modes, guided hints, save/load, motor evaluator and LOTO modules were not changed.
