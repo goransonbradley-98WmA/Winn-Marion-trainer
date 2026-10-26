@@ -44,3 +44,14 @@ test('evaluation does not mutate circuit',()=>{
   const d=devices(),edges=normal(),before=JSON.stringify([d,edges]);
   evaluate(d,edges);assert.equal(JSON.stringify([d,edges]),before);
 });
+
+test('two STOP contacts in series both independently stop the motor',()=>{
+  const d=devices(),edges=normal();d.push({id:5,type:'stop'});
+  edges.splice(0,1,w('L1','5:L'),w('5:R','1:L'));
+  assert.equal(evaluate(d,edges).result,'pass');
+});
+test('two STOP contacts in parallel are unsafe when only one is pressed',()=>{
+  const d=devices(),edges=normal();d.push({id:5,type:'stop'});
+  edges.push(w('L1','5:L'),w('5:R','1:R'));
+  assert.equal(evaluate(d,edges).reason,'unsafe stop');
+});
