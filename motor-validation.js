@@ -34,7 +34,8 @@ function evaluate(devices,wires){
   if(!devices.some(d=>d.type==='stop')||!devices.some(d=>d.type==='start'))
     return {result:'fail',reason:'missing components',message:'Add STOP NC and START NO before testing.'};
   const coil=coils[0];
-  function state(startPressed,auxClosed,stopPressed){
+  const stopIds=devices.filter(d=>d.type==='stop').map(d=>String(d.id));
+  function state(startPressed,auxClosed,pressedStopIds){
     const adj=new Map();
     function edge(a,b){
       if(!adj.has(a))adj.set(a,[]);
@@ -43,7 +44,7 @@ function evaluate(devices,wires){
     }
     wires.forEach(w=>edge(String(w.a),String(w.b)));
     devices.forEach(d=>{
-      if(d.type==='stop'&&!stopPressed||d.type==='start'&&startPressed||d.type==='aux'&&auxClosed)
+      if(d.type==='stop'&&!pressedStopIds.has(String(d.id))||d.type==='start'&&startPressed||d.type==='aux'&&auxClosed)
         edge(d.id+':L',d.id+':R');
     });
     function reached(from){
@@ -59,14 +60,21 @@ function evaluate(devices,wires){
       (l1.has(coil.id+':R')&&l2.has(coil.id+':L'));
     return {short,energized};
   }
-  const idle=state(false,false,false);
-  const start=state(true,false,false);
-  const run=state(false,true,false);
-  const stop=state(false,true,true);
-  const stopWhileStart=state(true,true,true);
-  if([idle,start,run,stop,stopWhileStart].some(s=>s.short))
+  const nonePressed=new Set(),allPressed=new Set(stopIds);
+  const idle=state(false,false,nonePressed);
+  const start=state(true,false,nonePressed);
+  const run=state(false,true,nonePressed);
+  const stop=state(false,true,allPressed);
+  const stopWhileStart=state(true,true,allPressed);
+  // Each STOP must independently release the coil, including while START is held.
+  // Pressing every STOP together would miss unsafe parallel STOP wiring.
+  const individualStops=stopIds.flatMap(id=>[
+    state(false,true,new Set([id])),
+    state(true,true,new Set([id]))
+  ]);
+  if([idle,start,run,stop,stopWhileStart,...individualStops].some(s=>s.short))
     return {result:'fail',reason:'supply short',message:'FAIL: A closed contact creates an L1-to-L2 short that bypasses the coil.'};
-  if(stop.energized||stopWhileStart.energized)
+  if(stop.energized||stopWhileStart.energized||individualStops.some(s=>s.energized))
     return {result:'fail',reason:'unsafe stop',message:'UNSAFE: Pressing STOP must de-energize the coil, even while START is held.'};
   if(idle.energized)
     return {result:'fail',reason:'unexpected energization',message:'FAIL: The coil energizes without pressing START. Check the START bypass.'};
