@@ -1,5 +1,16 @@
 # Winn-Marion Electrical Training Pro — project status
 
+## 2026-10-27 — independent START pushbutton validation
+- Updated `motor-validation.js` to verify each START NO pushbutton can energize the motor coil independently, while preserving the existing all-START, individual-STOP, AUX seal-in, idle and short-circuit checks. This prevents two START buttons incorrectly wired in series from passing merely because the previous model pressed all START buttons together.
+- Added two regression tests: parallel START buttons pass; incorrectly series-wired START buttons fail with `open circuit`. The new series case failed against the previous evaluator (`passed`) and passed after the fix. All 25 isolated regression tests passed against the updated evaluator; the previous 23 tests still pass.
+- Application commits on `main`: evaluator `052b583e1a10f7b362c86e6e1310a051bd795b00`; regression tests `e6f9f579e4034ddf2bb4455fabee4ddfab73d4b6`.
+- Vercel production deployment `dpl_26ypd76usb53o5rNRW87iX6qFPRo` verified READY with matching GitHub SHA `e6f9f579e4034ddf2bb4455fabee4ddfab73d4b6`.
+- Deployment test URL: https://electrical-training-qrosgi7yn-winn-marion.vercel.app/motor.html
+- Stable URL for browser-local student history: https://electrical-training-pro-winn-marion.vercel.app/motor.html
+- Only evaluator and test files changed; `simulator.js`, Samsung-approved drawing/pan/delete interactions, guided hints, saved circuits, progress/export, LOTO and separate course pages were not edited.
+- Limitations: regression tests ran in an isolated JavaScript harness, not a rendered browser. The direct HTTP check was unsuccessful (web retrieval inaccessible and container DNS resolution failed), so page load and Samsung interaction remain unverified. Vercel READY confirms deployment/build status only. The evaluator is an educational training model, not field-grade electrical certification.
+
+
 ## 2026-10-26 — independent STOP contact safety validation
 - Hardened `motor-validation.js` so the motor-control evaluator tests each STOP NC device independently, both with START released and held. Previously, testing all STOP contacts as pressed together could incorrectly pass a parallel STOP arrangement where pressing only one STOP failed to release the coil.
 - Added two deterministic regression cases: two STOP contacts in series pass; two STOP contacts in parallel fail as `unsafe stop`. The 21 prior cases also passed, for 23/23 total, executed against the committed source and tests in an isolated JavaScript harness (not a rendered browser test).
