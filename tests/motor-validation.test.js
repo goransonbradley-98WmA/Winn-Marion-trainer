@@ -55,3 +55,15 @@ test('two STOP contacts in parallel are unsafe when only one is pressed',()=>{
   edges.push(w('L1','5:L'),w('5:R','1:R'));
   assert.equal(evaluate(d,edges).reason,'unsafe stop');
 });
+
+test('two START buttons in parallel each independently energize the coil',()=>{
+  const d=devices(),edges=normal();d.push({id:5,type:'start'});
+  edges.push(w('1:R','5:L'),w('5:R','3:L'));
+  assert.equal(evaluate(d,edges).result,'pass');
+});
+test('two START buttons mistakenly wired in series fail individual START checks',()=>{
+  const d=devices(),edges=normal();d.push({id:5,type:'start'});
+  const edge=edges.find(e=>e.a==='2:R'&&e.b==='3:L');
+  edge.b='5:L';edges.push(w('5:R','3:L'));
+  assert.equal(evaluate(d,edges).reason,'open circuit');
+});
