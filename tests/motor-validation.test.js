@@ -67,3 +67,17 @@ test('two START buttons mistakenly wired in series fail individual START checks'
   edge.b='5:L';edges.push(w('5:R','3:L'));
   assert.equal(evaluate(d,edges).reason,'open circuit');
 });
+
+test('malformed circuit signatures do not throw after failed validation',()=>{
+  assert.equal(typeof signature(null,[]),'string');
+  assert.equal(typeof signature(devices(),[...normal(),null]),'string');
+  assert.equal(typeof signature([null,...devices()],normal()),'string');
+});
+test('invalid extra device changes practice signature',()=>{
+  assert.notEqual(signature(devices(),normal()),signature([...devices(),{id:99,type:'relay'}],normal()));
+});
+test('valid circuit signature remains stable after malformed-input hardening',()=>{
+  const d=devices(),edges=normal();
+  const expected=JSON.stringify([d.map(x=>String(x.id)+':'+x.type).sort(),edges.map(x=>[x.a,x.b].sort().join('~')).sort()]);
+  assert.equal(signature(d,edges),expected);
+});
