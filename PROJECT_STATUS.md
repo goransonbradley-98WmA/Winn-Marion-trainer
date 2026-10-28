@@ -1,5 +1,17 @@
 # Winn-Marion Electrical Training Pro — project status
 
+## 2026-10-28 — resilient motor-control practice signatures
+- Hardened `motor-validation.js` signature generation so malformed circuit arrays, null devices/wires, and unsupported extra devices cannot crash the motor Test handler after the evaluator returns a failure. Valid circuit signatures retain their existing format, preserving deduplication for previously saved valid circuits.
+- Invalid extra devices now contribute to the signature, so changing a malformed circuit is not silently treated as the same practice attempt.
+- Added three regression cases to `tests/motor-validation.test.js` for malformed inputs, invalid-device signature differences, and valid signature compatibility. Ran the complete 28-case suite in an isolated JavaScript harness against the updated source: 28 passed, 0 failed. This is not a rendered browser or real Samsung device test.
+- Application commits on `main`: evaluator `4cd98f7378532e3cd21f5213b170d798edab52b9`, tests `617959e0625b47712a30c5348f2883d43b75debb`.
+- Vercel production deployment `dpl_9XB4rADGejLrdZJiC7xUpWmQVzfr` confirmed READY with matching GitHub SHA `617959e0625b47712a30c5348f2883d43b75debb`.
+- Deployment URL: https://electrical-training-8rdtqym6r-winn-marion.vercel.app/motor.html
+- Stable URL for browser-local progress: https://electrical-training-pro-winn-marion.vercel.app/motor.html
+- `simulator.js`, Samsung-approved touch drawing/pan/delete modes, hints, saved circuits, progress/export, LOTO and separate course pages were not modified.
+- Limitations: Vercel READY confirms deployment status, not successful page load or touchscreen functionality. No rendered browser or Samsung regression test completed. Circuit evaluation remains educational only; secure employee accounts and shared instructor gradebook are pending.
+
+
 ## 2026-10-27 — independent START pushbutton validation
 - Updated `motor-validation.js` to verify each START NO pushbutton can energize the motor coil independently, while preserving the existing all-START, individual-STOP, AUX seal-in, idle and short-circuit checks. This prevents two START buttons incorrectly wired in series from passing merely because the previous model pressed all START buttons together.
 - Added two regression tests: parallel START buttons pass; incorrectly series-wired START buttons fail with `open circuit`. The new series case failed against the previous evaluator (`passed`) and passed after the fix. All 25 isolated regression tests passed against the updated evaluator; the previous 23 tests still pass.
