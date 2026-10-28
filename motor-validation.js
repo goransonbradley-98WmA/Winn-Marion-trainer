@@ -3,8 +3,15 @@
 'use strict';
 const typeSet=new Set(['stop','start','aux','coil']);
 function signature(devices,wires){
-  const parts=devices.filter(d=>typeSet.has(d.type)).map(d=>String(d.id)+':'+d.type).sort();
-  const edges=wires.map(w=>[String(w.a),String(w.b)].sort().join('~')).sort();
+  // Keep valid-circuit signatures unchanged, but never crash the Test handler
+  // when malformed circuit data is encountered. Include invalid devices so
+  // changing a broken circuit is still recognized as a new practice attempt.
+  const parts=Array.isArray(devices)?devices.map(d=>
+    d&&typeof d==='object'?String(d.id)+':'+String(d.type):'invalid-device:'+String(d)
+  ).sort():null;
+  const edges=Array.isArray(wires)?wires.map(w=>
+    w&&typeof w==='object'?[String(w.a),String(w.b)].sort().join('~'):'invalid-wire:'+String(w)
+  ).sort():null;
   return JSON.stringify([parts,edges]);
 }
 function evaluate(devices,wires){
