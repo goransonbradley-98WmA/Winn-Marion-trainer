@@ -1,0 +1,3 @@
+# Browser verification screenshots are local evidence, not deployed assets.
+tests/*-desktop.png
+tests/*-mobile.png

@@ -7,6 +7,7 @@ if(!button||!validator||typeof validator.evaluate!=='function'||typeof validator
 button.dataset.validation='topology-preview';
 button.onclick=()=>{
   const verdict=validator.evaluate(devices,wires);
+  globalThis.TrainerFeedback?.show(verdict);
   const signature=validator.signature(devices,wires);
   const duplicate=attemptHistory.some(a=>a.signature===signature);
   if(!duplicate){

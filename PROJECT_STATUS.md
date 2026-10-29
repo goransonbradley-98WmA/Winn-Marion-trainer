@@ -1,5 +1,15 @@
 # Winn-Marion Electrical Training Pro — project status
 
+## 2026-10-29 — motor outcomes and separate basic wiring trainer
+- Continued from approved main checkpoint f1f3a5e. Motor Test uses the existing unchanged topology evaluator; only a full pass displays a green rotating motor. Failed tests display a stationary smoking motor and original SVG storybook-lord artwork with “You don't know the Muffin Man!” No uploaded or third-party image is assumed. Smoke is explicitly comic feedback, not predicted equipment damage.
+- New dedicated basic-wiring.html reuses the approved schematic interaction engine with its own source / maintained switch / motor-load evaluator. Tests verify a complete switched load path, open-switch interruption, shorts, bypasses, malformed terminals and unsupported devices. Motor-control and basic pages link to each other and the catalog. Basic circuits and attempts have separate browser-local keys; the existing progress dashboard still reports motor-control history only.
+- Outcomes return to idle on redraw/edit, load, undo, reset or board pointer interaction, preventing a stale running animation after wiring changes. Reduced-motion preference disables animation. Responsive outcome layout, readable colors and mobile header handling added.
+- Existing motor evaluator, guided hints, motor save/history keys, freehand pointer geometry, explicit draw/pan/device/delete modes and LOTO files preserved. simulator.js only changes storage-key selection for the basic page.
+- Verification: node --test tests/motor-validation.test.js tests/basic-validation.test.js passed 38/38 (28 existing motor, 10 basic). Headless Edge browser-regression.cjs passed both pages at 1440x1000 and 390x844 with touch emulation: fail/pass animation states, no running on short, edit invalidation, save/load, undo, freehand desktop drawing, touch terminal connections, one-tap wire deletion away from components, mutually exclusive modes, catalog navigation and no page errors / horizontal document overflow. Screenshots visually inspected; contrast and mobile header corrected.
+- Limitations: emulated touch is not a real Samsung test. Basic motor load is a simplified educational two-terminal model, not a direct-wired industrial installation or safety certification. Authenticated grading and cross-device progress remain pending. Browser tests use synthetic circuit fixtures for verdict cases plus actual pointer/touch drawing/deletion checks.
+- Release verification pending below; no READY claim until Vercel is checked.
+
+
 ## 2026-10-28 — resilient motor-control practice signatures
 - Hardened `motor-validation.js` signature generation so malformed circuit arrays, null devices/wires, and unsupported extra devices cannot crash the motor Test handler after the evaluator returns a failure. Valid circuit signatures retain their existing format, preserving deduplication for previously saved valid circuits.
 - Invalid extra devices now contribute to the signature, so changing a malformed circuit is not silently treated as the same practice attempt.
