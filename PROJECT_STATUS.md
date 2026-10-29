@@ -1,5 +1,16 @@
 # Winn-Marion Electrical Training Pro — project status
 
+## 2026-10-29 — student progress now includes separate basic wiring results
+- Updated `student-progress.html` to show a separate Basic Wiring Practice section with locally recorded tests, passes, failures, distinct signed circuit count and saved basic workspace status. Added a direct link to the basic wiring trainer.
+- The motor-control summary, existing practice export (motor records only), localStorage keys, circuit evaluator, motor/LOTO simulators, mobile wiring controls, hints and saved circuit functionality remain unchanged. Basic records use `wm-training-basic-attempts-v1` and `wm-training-basic-workspace-v1`; no merging or rewriting of existing records.
+- Validated the dashboard inline JavaScript syntax and simulated DOM rendering against mixed motor/basic records (3 basic attempts, 2 passes, 1 failure, 2 distinct signatures, 2-device saved circuit), empty storage and corrupt basic attempt data. All three scenarios matched expected results.
+- Application commit on main: `ebaebda7c087a3e8fec21b895aef6a7a9541a43a`.
+- Vercel production deployment `dpl_6fiHgYhPq3a52ZHx41nQVNM26Q5d` confirmed READY with matching application SHA; stable alias assigned.
+- Versioned test link: https://electrical-training-7qugjty0w-winn-marion.vercel.app/student-progress.html
+- Stable URL (recommended for existing browser-local data): https://electrical-training-pro-winn-marion.vercel.app/student-progress.html
+- Limitations: JavaScript tests used a simulated DOM, not rendered browser or real Samsung verification for this dashboard change. Data is still local to the browser and cannot be used as authenticated employee training grades. The basic trainer and motor outcomes were previously browser-tested in the preceding release; this run did not repeat those browser regressions.
+
+
 ## 2026-10-29 — motor outcomes and separate basic wiring trainer
 - Continued from approved main checkpoint f1f3a5e. Motor Test uses the existing unchanged topology evaluator; only a full pass displays a green rotating motor. Failed tests display a stationary smoking motor and original SVG storybook-lord artwork with “You don't know the Muffin Man!” No uploaded or third-party image is assumed. Smoke is explicitly comic feedback, not predicted equipment damage.
 - New dedicated basic-wiring.html reuses the approved schematic interaction engine with its own source / maintained switch / motor-load evaluator. Tests verify a complete switched load path, open-switch interruption, shorts, bypasses, malformed terminals and unsupported devices. Motor-control and basic pages link to each other and the catalog. Basic circuits and attempts have separate browser-local keys; the existing progress dashboard still reports motor-control history only.
