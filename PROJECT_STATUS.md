@@ -1,5 +1,18 @@
 # Winn-Marion Electrical Training Pro — project status
 
+## 2026-10-30 — separate basic wiring practice JSON export
+- Added an explicit **Export basic wiring results (JSON)** action to the Basic Wiring Practice section of `student-progress.html`. It downloads only the current browser's basic-wiring practice attempts (up to the newest 200 valid pass/fail entries) with `wm-basic-practice-v1` format, trainer identifier, export timestamp and browser-local source label.
+- This complements, but does not change, the existing motor-control JSON export. No records are uploaded or changed; instructor accounts, grading and cross-device synchronization remain pending.
+- Verified the actual modified inline dashboard script compiled successfully and passed four isolated simulated-DOM checks: valid basic export with invalid entries filtered, malformed basic storage safely rejected, empty history exported as an empty array, and legacy motor export still functioning. This was not a real rendered browser or Samsung device test.
+- Existing motor and basic wiring evaluators, Samsung touch modes, guided hints, saved circuits, trainer animations, LOTO, and separate simulator pages were not modified.
+- Application commit on main: `22f10dbd7cbedde1fe7bcc10b13b8c9aa07ed6aa`.
+- Vercel production deployment `dpl_Cgkiwvh3skFM3u4GpW6gpMhF4T4v` confirmed READY with matching application SHA and stable production alias.
+- Versioned test URL: https://electrical-training-altk77ii8-winn-marion.vercel.app/student-progress.html
+- Stable URL (recommended to retain browser-local records): https://electrical-training-pro-winn-marion.vercel.app/student-progress.html
+- Limitations: direct web retrieval of the deployment URL was inaccessible; READY verifies deployment/build status, not page load or download behavior on Samsung. Practice exports are user-controlled informal records, not verified employee training grades.
+
+
+
 ## 2026-10-29 — student progress now includes separate basic wiring results
 - Updated `student-progress.html` to show a separate Basic Wiring Practice section with locally recorded tests, passes, failures, distinct signed circuit count and saved basic workspace status. Added a direct link to the basic wiring trainer.
 - The motor-control summary, existing practice export (motor records only), localStorage keys, circuit evaluator, motor/LOTO simulators, mobile wiring controls, hints and saved circuit functionality remain unchanged. Basic records use `wm-training-basic-attempts-v1` and `wm-training-basic-workspace-v1`; no merging or rewriting of existing records.
