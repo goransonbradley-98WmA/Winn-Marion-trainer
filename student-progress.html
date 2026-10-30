@@ -44,7 +44,7 @@ footer{color:#afc9d9;font-size:13px;margin-top:25px;line-height:1.5}
 </section>
 <section class="panel" aria-labelledby="reasons-title"><h2 id="reasons-title">Troubleshooting focus</h2><div id="reasons" class="bars"></div></section>
 <section class="panel" aria-labelledby="history-title"><h2 id="history-title">Recent motor-control tests</h2><div id="history" class="tablewrap"></div></section>
-<section class="panel" aria-labelledby="basic-title"><h2 id="basic-title">Basic wiring practice</h2><p class="empty">Separate from motor-control tests. These results are saved only in this browser.</p><div class="cards"><div class="card"><span>Basic tests</span><strong id="basicTotal">—</strong></div><div class="card"><span>Passed</span><strong id="basicPasses">—</strong></div><div class="card"><span>Failed</span><strong id="basicFailures">—</strong></div><div class="card"><span>Distinct circuits</span><strong id="basicUnique">—</strong></div></div><p id="basicWorkspace" class="empty">Checking for a saved basic wiring circuit…</p><div class="actions"><a href="/basic-wiring.html">Open basic wiring trainer</a></div></section>
+<section class="panel" aria-labelledby="basic-title"><h2 id="basic-title">Basic wiring practice</h2><p class="empty">Separate from motor-control tests. These results are saved only in this browser.</p><div class="cards"><div class="card"><span>Basic tests</span><strong id="basicTotal">—</strong></div><div class="card"><span>Passed</span><strong id="basicPasses">—</strong></div><div class="card"><span>Failed</span><strong id="basicFailures">—</strong></div><div class="card"><span>Distinct circuits</span><strong id="basicUnique">—</strong></div></div><p id="basicWorkspace" class="empty">Checking for a saved basic wiring circuit…</p><div class="actions"><a href="/basic-wiring.html">Open basic wiring trainer</a><button id="exportBasicPractice" type="button">Export basic wiring results (JSON)</button></div><p id="basicExportStatus" class="empty" role="status">Export only downloads a local copy; it does not send results to an instructor.</p></section>
 <section class="panel" aria-labelledby="workspace-title"><h2 id="workspace-title">Saved circuit</h2><p id="workspace" class="empty">Checking this browser for your saved motor-control circuit…</p></section>
 <div class="actions"><a href="/motor.html">Open motor-control training</a><a href="/vr-loto.html">Open LOTO lab</a><button id="exportPractice" type="button">Export my practice results (JSON)</button></div><p id="exportStatus" class="empty" role="status">Export is optional and stays on your device until you choose to share the file. It is not an instructor grade report.</p>
 <footer>Training prototype: the current circuit evaluator is simplified and must not be used to certify electrical competence or authorize live work. Newer motor-control tests avoid duplicate attempts for an identical wiring signature; legacy records may contain repeats. Employee authentication, server-side records, and instructor reporting remain future work.</footer>
@@ -130,6 +130,21 @@ document.getElementById('exportPractice').addEventListener('click',function(){
   setTimeout(function(){URL.revokeObjectURL(url)},1000);
   status.textContent='Practice export prepared. Only share this file with someone you trust.';
  }catch(e){status.textContent='Unable to export practice records from this browser.'}
+});
+document.getElementById('exportBasicPractice').addEventListener('click',function(){
+ var status=document.getElementById('basicExportStatus');
+ try{
+  var parsed=JSON.parse(localStorage.getItem(basicAttemptKey)||'[]');
+  if(!Array.isArray(parsed))throw new Error('Basic practice records are not an array.');
+  var attempts=parsed.filter(function(a){return a&&typeof a==='object'&&(a.result==='pass'||a.result==='fail')}).slice(-200);
+  var payload={format:'wm-basic-practice-v1',trainer:'basic-wiring',exportedAt:new Date().toISOString(),source:'browser-local',attempts:attempts};
+  var blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  var url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download='wm-basic-practice-'+new Date().toISOString().slice(0,10)+'.json';
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(function(){URL.revokeObjectURL(url)},1000);
+  status.textContent='Basic wiring export prepared. Only share this file with someone you trust.';
+ }catch(e){status.textContent='Unable to export basic wiring records from this browser.'}
 });
 render();window.addEventListener('pageshow',render);document.addEventListener('visibilitychange',function(){if(!document.hidden)render()});
 })();
