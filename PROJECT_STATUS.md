@@ -1,5 +1,17 @@
 # Winn-Marion Electrical Training Pro — project status
 
+## 2026-10-31 — basic wiring practice history and resilient workspace reading
+- Updated only `student-progress.html`: Basic Wiring now shows pass rate and a recent 10-attempt table (date/time, result, troubleshooting reason) alongside the existing basic summary and JSON export. Rows are constructed with textContent, not injected HTML.
+- Separated Basic Wiring saved-workspace parsing from attempt-history parsing. A corrupted saved workspace now displays its own error without hiding otherwise valid test totals and history.
+- Verified the actual updated inline dashboard JavaScript compiles and passed four simulated-DOM scenarios: mixed valid basic/motor attempts with both exports still wired, corrupt basic workspace with valid attempts, corrupt basic attempt history, and empty storage. This is not a full browser or Samsung device test.
+- No changes to circuit evaluators, `simulator.js`, Samsung touch modes, guided hints, saved circuits, motor outcome animations, LOTO, or separate trainer pages.
+- Application commit on `main`: `958477c42354935fcf06de21b8a3895506ffb192`.
+- Vercel production deployment `dpl_RoreH1xD3vQ8W8iVn8aVmC2Ynw1t` verified READY with matching application SHA and stable production alias.
+- Versioned test URL: https://electrical-training-k4nbougbg-winn-marion.vercel.app/student-progress.html
+- Stable URL for browser-local records: https://electrical-training-pro-winn-marion.vercel.app/student-progress.html
+- Limitations: deployment READY is not proof of a successful browser page load; no actual Samsung verification in this run. Student history remains local to each browser, without authenticated accounts or instructor gradebook.
+
+
 ## 2026-10-30 — separate basic wiring practice JSON export
 - Added an explicit **Export basic wiring results (JSON)** action to the Basic Wiring Practice section of `student-progress.html`. It downloads only the current browser's basic-wiring practice attempts (up to the newest 200 valid pass/fail entries) with `wm-basic-practice-v1` format, trainer identifier, export timestamp and browser-local source label.
 - This complements, but does not change, the existing motor-control JSON export. No records are uploaded or changed; instructor accounts, grading and cross-device synchronization remain pending.
