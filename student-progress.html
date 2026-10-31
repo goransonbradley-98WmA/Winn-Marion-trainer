@@ -44,7 +44,7 @@ footer{color:#afc9d9;font-size:13px;margin-top:25px;line-height:1.5}
 </section>
 <section class="panel" aria-labelledby="reasons-title"><h2 id="reasons-title">Troubleshooting focus</h2><div id="reasons" class="bars"></div></section>
 <section class="panel" aria-labelledby="history-title"><h2 id="history-title">Recent motor-control tests</h2><div id="history" class="tablewrap"></div></section>
-<section class="panel" aria-labelledby="basic-title"><h2 id="basic-title">Basic wiring practice</h2><p class="empty">Separate from motor-control tests. These results are saved only in this browser.</p><div class="cards"><div class="card"><span>Basic tests</span><strong id="basicTotal">—</strong></div><div class="card"><span>Passed</span><strong id="basicPasses">—</strong></div><div class="card"><span>Failed</span><strong id="basicFailures">—</strong></div><div class="card"><span>Distinct circuits</span><strong id="basicUnique">—</strong></div></div><p id="basicWorkspace" class="empty">Checking for a saved basic wiring circuit…</p><div class="actions"><a href="/basic-wiring.html">Open basic wiring trainer</a><button id="exportBasicPractice" type="button">Export basic wiring results (JSON)</button></div><p id="basicExportStatus" class="empty" role="status">Export only downloads a local copy; it does not send results to an instructor.</p></section>
+<section class="panel" aria-labelledby="basic-title"><h2 id="basic-title">Basic wiring practice</h2><p class="empty">Separate from motor-control tests. These results are saved only in this browser.</p><div class="cards"><div class="card"><span>Basic tests</span><strong id="basicTotal">—</strong></div><div class="card"><span>Passed</span><strong id="basicPasses">—</strong></div><div class="card"><span>Failed</span><strong id="basicFailures">—</strong></div><div class="card"><span>Pass rate</span><strong id="basicRate">—</strong></div><div class="card"><span>Distinct circuits</span><strong id="basicUnique">—</strong></div></div><p id="basicWorkspace" class="empty">Checking for a saved basic wiring circuit…</p><h3>Recent basic wiring tests</h3><div id="basicHistory" class="tablewrap"></div><div class="actions"><a href="/basic-wiring.html">Open basic wiring trainer</a><button id="exportBasicPractice" type="button">Export basic wiring results (JSON)</button></div><p id="basicExportStatus" class="empty" role="status">Export only downloads a local copy; it does not send results to an instructor.</p></section>
 <section class="panel" aria-labelledby="workspace-title"><h2 id="workspace-title">Saved circuit</h2><p id="workspace" class="empty">Checking this browser for your saved motor-control circuit…</p></section>
 <div class="actions"><a href="/motor.html">Open motor-control training</a><a href="/vr-loto.html">Open LOTO lab</a><button id="exportPractice" type="button">Export my practice results (JSON)</button></div><p id="exportStatus" class="empty" role="status">Export is optional and stays on your device until you choose to share the file. It is not an instructor grade report.</p>
 <footer>Training prototype: the current circuit evaluator is simplified and must not be used to certify electrical competence or authorize live work. Newer motor-control tests avoid duplicate attempts for an identical wiring signature; legacy records may contain repeats. Employee authentication, server-side records, and instructor reporting remain future work.</footer>
@@ -97,23 +97,42 @@ var status='No saved circuit found in this browser.';
 if(saved&&Array.isArray(saved.devices)&&Array.isArray(saved.wires)){status='Saved motor-control workspace found: '+saved.devices.length+' devices and '+saved.wires.length+' wires. Open the simulator and choose Load circuit to restore it.'}
 if(error)status='Browser storage could not be read. Check browser privacy or storage settings.';
 set('workspace',status);
-var basicAttempts=[],basicSaved=null,basicError=false;
+var basicAttempts=[],basicSaved=null,basicError=false,basicWorkspaceError=false;
 try{
  var basicRaw=JSON.parse(localStorage.getItem(basicAttemptKey)||'[]');
  if(!Array.isArray(basicRaw))throw new Error('Invalid basic attempts');
  basicAttempts=basicRaw.filter(function(a){return a&&typeof a==='object'&&(a.result==='pass'||a.result==='fail')}).slice(-200);
+}catch(e){basicError=true}
+try{
  var basicData=localStorage.getItem(basicWorkspaceKey);
  if(basicData)basicSaved=JSON.parse(basicData);
-}catch(e){basicError=true}
+}catch(e){basicWorkspaceError=true}
 var basicPasses=basicAttempts.filter(function(a){return a.result==='pass'}).length;
 var basicSignatures=new Set(basicAttempts.filter(function(a){return typeof a.signature==='string'&&a.signature.length>0}).map(function(a){return a.signature}));
 set('basicTotal',basicError?'—':basicAttempts.length);
 set('basicPasses',basicError?'—':basicPasses);
 set('basicFailures',basicError?'—':basicAttempts.length-basicPasses);
+set('basicRate',basicError||!basicAttempts.length?'—':Math.round(100*basicPasses/basicAttempts.length)+'%');
 set('basicUnique',basicError?'—':basicSignatures.size||'—');
+var basicHistory=document.getElementById('basicHistory');basicHistory.replaceChildren();
+if(basicError||!basicAttempts.length){
+ basicHistory.append(node('p',basicError?'Basic wiring test history could not be read.':'No basic wiring tests recorded on this device yet.','empty'));
+}else{
+ var basicTable=node('table'),basicHead=node('thead'),basicHeadRow=node('tr');
+ ['Date / time','Result','Troubleshooting result'].forEach(function(s){basicHeadRow.append(node('th',s))});
+ basicHead.append(basicHeadRow);basicTable.append(basicHead);
+ var basicBody=node('tbody');
+ basicAttempts.slice().reverse().slice(0,10).forEach(function(a){
+  var row=node('tr'),date='Unknown date';
+  if(typeof a.at==='string'){var d=new Date(a.at);if(!isNaN(d.getTime()))date=d.toLocaleString()}
+  row.append(node('td',date),node('td',a.result.toUpperCase(),a.result==='pass'?'pass':'fail'),node('td',typeof a.reason==='string'?a.reason.slice(0,100):'Not recorded'));
+  basicBody.append(row);
+ });
+ basicTable.append(basicBody);basicHistory.append(basicTable);
+}
 var basicStatus='No saved basic wiring circuit found in this browser.';
 if(basicSaved&&Array.isArray(basicSaved.devices)&&Array.isArray(basicSaved.wires))basicStatus='Saved basic wiring workspace found: '+basicSaved.devices.length+' devices and '+basicSaved.wires.length+' wires. Open the basic wiring trainer and choose Load circuit.';
-if(basicError)basicStatus='Basic wiring records could not be read from browser storage.';
+if(basicWorkspaceError)basicStatus='Saved basic wiring workspace could not be read from browser storage.';
 set('basicWorkspace',basicStatus)
 }
 document.getElementById('exportPractice').addEventListener('click',function(){
