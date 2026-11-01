@@ -33,7 +33,7 @@ footer{color:#afc9d9;font-size:13px;margin-top:25px;line-height:1.5}
 <header><div><strong>WINN-MARION</strong><small>ELECTRICAL TRAINING PRO · PRACTICE PREVIEW</small></div><a href="/">← Training home</a></header>
 <main>
 <h1>My practice progress</h1>
-<p class="lead">A first look at training progress using the motor-control attempts already saved by this browser. This page reads existing records without changing your circuit, wiring tools, or test results.</p>
+<p class="lead">A first look at motor-control and basic-wiring practice results already saved by this browser. This page reads existing records without changing your circuit, wiring tools, or test results.</p>
 <div class="notice"><strong>Local practice data only.</strong> This is not a verified employee profile or instructor gradebook. Results stay in this browser, may disappear if browser data is cleared, and do not sync between devices. Older attempts may include repeated tests of the same wiring. Distinct-circuit counts include only newer attempts that carry a wiring signature.</div>
 <section class="cards" aria-label="Practice summary">
 <div class="card"><span>Recorded tests</span><strong id="total">—</strong></div>
@@ -59,29 +59,32 @@ var workspaceKey='wm-training-motor-workspace-v1';
 function set(id,value){document.getElementById(id).textContent=String(value)}
 function node(tag,text,className){var n=document.createElement(tag);if(text!==undefined)n.textContent=String(text);if(className)n.className=className;return n}
 function render(){
-var attempts=[],saved=null,error=false;
+var attempts=[],saved=null,attemptError=false,workspaceError=false;
 try{
  var raw=JSON.parse(localStorage.getItem(attemptKey)||'[]');
- if(Array.isArray(raw))attempts=raw.filter(function(a){return a&&typeof a==='object'&&(a.result==='pass'||a.result==='fail')}).slice(-200);
+ if(!Array.isArray(raw))throw new Error('Invalid motor attempts');
+ attempts=raw.filter(function(a){return a&&typeof a==='object'&&(a.result==='pass'||a.result==='fail')}).slice(-200);
+}catch(e){attemptError=true}
+try{
  var data=localStorage.getItem(workspaceKey);
  if(data)saved=JSON.parse(data);
-}catch(e){error=true}
+}catch(e){workspaceError=true}
 var pass=attempts.filter(function(a){return a.result==='pass'}).length;
 var fail=attempts.length-pass;
-set('total',attempts.length);set('passes',pass);set('failures',fail);set('rate',attempts.length?Math.round(100*pass/attempts.length)+'%':'—');
+set('total',attemptError?'—':attempts.length);set('passes',attemptError?'—':pass);set('failures',attemptError?'—':fail);set('rate',attemptError||!attempts.length?'—':Math.round(100*pass/attempts.length)+'%');
 var signatures=new Set(attempts.filter(function(a){return typeof a.signature==='string'&&a.signature.length>0}).map(function(a){return a.signature}));
-set('unique',signatures.size||'—');
+set('unique',attemptError?'—':signatures.size||'—');
 var reasons=document.getElementById('reasons');reasons.replaceChildren();
 var counts={};
 attempts.forEach(function(a){if(a.result==='fail'){var reason=typeof a.reason==='string'&&a.reason.trim()?a.reason.trim().slice(0,60):'unspecified';counts[reason]=(counts[reason]||0)+1}});
 var entries=Object.entries(counts).sort(function(a,b){return b[1]-a[1]}).slice(0,8);
-if(!entries.length)reasons.append(node('p',error?'Browser storage is unavailable.':'No failed tests recorded yet.','empty'));
+if(!entries.length)reasons.append(node('p',attemptError?'Motor-control test history could not be read.':'No failed tests recorded yet.','empty'));
 entries.forEach(function(entry){
  var row=node('div',undefined,'row'),label=node('span',entry[0].replace(/\b\w/g,function(c){return c.toUpperCase()})),track=node('div',undefined,'track'),fill=node('div',undefined,'fill');
  fill.style.width=Math.round(100*entry[1]/Math.max(1,fail))+'%';track.append(fill);row.append(label,track,node('strong',entry[1]));reasons.append(row);
 });
 var history=document.getElementById('history');history.replaceChildren();
-if(!attempts.length){history.append(node('p',error?'Cannot read browser storage.':'No recorded attempts on this device yet. Complete a motor-control circuit and press Test.','empty'))}
+if(!attempts.length){history.append(node('p',attemptError?'Motor-control test history could not be read.':'No recorded attempts on this device yet. Complete a motor-control circuit and press Test.','empty'))}
 else{
  var table=node('table'),thead=node('thead'),tr=node('tr');
  ['Date / time','Result','Troubleshooting result'].forEach(function(s){tr.append(node('th',s))});thead.append(tr);table.append(thead);
@@ -95,7 +98,7 @@ else{
 }
 var status='No saved circuit found in this browser.';
 if(saved&&Array.isArray(saved.devices)&&Array.isArray(saved.wires)){status='Saved motor-control workspace found: '+saved.devices.length+' devices and '+saved.wires.length+' wires. Open the simulator and choose Load circuit to restore it.'}
-if(error)status='Browser storage could not be read. Check browser privacy or storage settings.';
+if(workspaceError)status='Saved motor-control workspace could not be read from browser storage.';
 set('workspace',status);
 var basicAttempts=[],basicSaved=null,basicError=false,basicWorkspaceError=false;
 try{
