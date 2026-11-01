@@ -1,5 +1,17 @@
 # Winn-Marion Electrical Training Pro — project status
 
+## 2026-11-01 — motor practice history resilience
+- Updated only `student-progress.html` to parse motor-control attempt history separately from the saved motor workspace. A corrupt workspace no longer hides otherwise valid motor test counts/history; corrupt or non-array attempt history now reports an explicit error while leaving a valid saved-workspace status visible.
+- Clarified the dashboard introduction to cover both Motor Controls and Basic Wiring. No existing browser-local keys or records were changed.
+- Verified the actual updated inline JavaScript compiled and passed four simulated-DOM cases: valid motor attempts plus corrupt workspace, corrupt attempts plus valid workspace, non-array motor history with unaffected Basic Wiring history, and empty storage with both export actions still attached.
+- Motor/basic circuit validators, `simulator.js`, approved Samsung touch modes, guided hints, saved circuits, green/smoking motor feedback, separate trainer pages, and LOTO were not modified.
+- Application commit on `main`: `76be2cdfd0d9c48b8f52cdd804f0ba908f8727a6`.
+- Vercel production deployment `dpl_G7h6Zb572HwQG53Dpsu1YdmoCd7o` verified READY with matching application commit and stable alias.
+- Versioned test URL: https://electrical-training-10ct4ee3k-winn-marion.vercel.app/student-progress.html
+- Stable URL for existing browser-local history: https://electrical-training-pro-winn-marion.vercel.app/student-progress.html
+- Limitations: direct page retrieval via the available web tool was inaccessible. Simulated DOM checks and Vercel READY do not establish real Samsung/browser functionality. Employee accounts, shared instructor reporting and certified electrical validation remain unimplemented.
+
+
 ## 2026-10-31 — basic wiring practice history and resilient workspace reading
 - Updated only `student-progress.html`: Basic Wiring now shows pass rate and a recent 10-attempt table (date/time, result, troubleshooting reason) alongside the existing basic summary and JSON export. Rows are constructed with textContent, not injected HTML.
 - Separated Basic Wiring saved-workspace parsing from attempt-history parsing. A corrupted saved workspace now displays its own error without hiding otherwise valid test totals and history.
