@@ -13,3 +13,17 @@ test('malformed wire fails',()=>assert.equal(evaluate(d,[null]).result,'fail'));
 test('phantom terminal fails',()=>assert.equal(evaluate(d,[...good(),{a:'99:L',b:'L2'}]).result,'fail'));
 test('extra device fails',()=>assert.equal(evaluate([...d,{id:4,type:'aux'}],good()).result,'fail'));
 test('duplicate IDs fail',()=>assert.equal(evaluate([{id:2,type:'start'},{id:2,type:'coil'}],good()).result,'fail'));
+
+ // Malformed saved workspaces should fail safely instead of throwing in Test.
+for(const [label,devices] of [
+ ['null device',[null,{id:3,type:'coil'}]],
+ ['null coil',[{id:2,type:'start'},null]],
+ ['missing device ID',[{type:'start'},{id:3,type:'coil'}]],
+])test(label+' returns fail without throwing',()=>assert.equal(evaluate(devices,good()).result,'fail'));
+for(const id of [2.5,Number.MAX_SAFE_INTEGER+1]){
+ test('invalid numeric device ID '+id+' cannot pass an otherwise complete circuit',()=>{
+  const devices=[{id,type:'start'},{id:3,type:'coil'}];
+  const wires=w(['L1',id+':L'],[id+':R','3:L'],['3:R','L2']);
+  assert.equal(evaluate(devices,wires).result,'fail');
+ });
+}
