@@ -1,5 +1,14 @@
 # Winn-Marion Electrical Training Pro — project status
 
+## 2026-11-02 — reject malformed basic wiring device IDs
+- Hardened only `basic-validation.js`: Basic Wiring now rejects null/non-object device entries and IDs that are not safe integers, rather than allowing fractional or unsafe-number IDs to form a passing circuit. This protects the educational circuit evaluator against malformed imported/saved circuit data without changing valid wiring behavior.
+- Added five regression cases to `tests/basic-validation.test.js` (null devices, missing ID, fractional ID and unsafe integer ID), retaining all ten existing cases. Reproduced the previous evaluator passing two otherwise correctly wired circuits with invalid numeric IDs, then ran the updated exact GitHub source and test files in Node 22: **15 passed, 0 failed**. Local git blob hashes matched the GitHub blobs for both files (`4fecd226074f307ccc08107f6ff84aab19d5c64d`, `7ed3968fb97a85727e1267c1a44dad37454266ea`). These are isolated evaluator tests, not rendered browser tests.
+- Application commits on `main`: validator `9469e28b3c87011cead72ba80b2b613ca5950fdd`, regression tests `1e413a39ac0fd01fee2168463bdab819881021ff`.
+- Vercel production deployment `dpl_62tygiBBEqkowZSvbVtK39m7kMzc` confirmed **READY** with matching test commit `1e413a39ac0fd01fee2168463bdab819881021ff`.
+- Versioned test URL: https://electrical-training-9vorwe3m4-winn-marion.vercel.app/basic-wiring.html
+- Stable URL (retains browser-local saved practice data): https://electrical-training-pro-winn-marion.vercel.app/basic-wiring.html
+- No changes to `simulator.js`, Samsung touch controls, guided hints, saved circuits, motor green/smoking feedback, student progress, motor evaluator, or LOTO. Browser/Samsung end-to-end testing remains outstanding; Vercel READY is deployment status, not a device test. Employee accounts and instructor gradebook remain future work.
+
 ## 2026-11-01 — motor practice history resilience
 - Updated only `student-progress.html` to parse motor-control attempt history separately from the saved motor workspace. A corrupt workspace no longer hides otherwise valid motor test counts/history; corrupt or non-array attempt history now reports an explicit error while leaving a valid saved-workspace status visible.
 - Clarified the dashboard introduction to cover both Motor Controls and Basic Wiring. No existing browser-local keys or records were changed.
