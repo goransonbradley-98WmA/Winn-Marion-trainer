@@ -81,3 +81,14 @@ test('valid circuit signature remains stable after malformed-input hardening',()
   const expected=JSON.stringify([d.map(x=>String(x.id)+':'+x.type).sort(),edges.map(x=>[x.a,x.b].sort().join('~')).sort()]);
   assert.equal(signature(d,edges),expected);
 });
+
+test('rejects malformed motor device IDs without accepting an otherwise valid circuit',()=>{
+  for(const id of [null,undefined,1.5,Number.MAX_SAFE_INTEGER+1,NaN,Infinity,'  ']){
+    const d=devices(),edges=normal();
+    d[0].id=id;
+    // Rewire to the malformed device ID to avoid relying on dangling-wire rejection.
+    const replacement=String(id);
+    const changed=edges.map(edge=>w(edge.a.replace(/^1:/,replacement+':'),edge.b.replace(/^1:/,replacement+':')));
+    assert.equal(evaluate(d,changed).reason,'invalid circuit',String(id));
+  }
+});
