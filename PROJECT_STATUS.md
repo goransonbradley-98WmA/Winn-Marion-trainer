@@ -1,5 +1,15 @@
 # Winn-Marion Electrical Training Pro — project status
 
+## 2026-11-03 — reject malformed motor device identifiers
+- Hardened `motor-validation.js` to reject null, missing, fractional, non-finite, unsafe numeric, and whitespace-only device IDs before circuit graph evaluation. Valid integer and nonblank string IDs remain supported. This closes the same malformed-ID class addressed in Basic Wiring on November 2.
+- Added regression coverage to `tests/motor-validation.test.js` for seven malformed IDs, including rewired terminals so the invalid-circuit result cannot be explained by dangling wires.
+- Executed eight focused checks directly against the exact fetched GitHub evaluator in an isolated JavaScript runtime: seven malformed ID cases rejected, and one valid reference circuit passed (8/8). The full Node test suite and rendered-browser/Samsung checks were not run: container could not resolve raw.githubusercontent.com.
+- GitHub main commits: evaluator `a8f1d34d985ca2318076b295030c7a95fb19f8f7`, regression tests `5106555e00e72e5077b6b43fb7206345b3d767c1`.
+- Vercel production deployment `dpl_4RG9zJnUwJa6GzpViuBmqe3ktAcX` confirmed READY with matching test commit `5106555e00e72e5077b6b43fb7206345b3d767c1`.
+- Versioned test URL: https://electrical-training-2aedr8157-winn-marion.vercel.app/motor.html
+- Stable URL for existing browser-local history: https://electrical-training-pro-winn-marion.vercel.app/motor.html
+- Only the motor evaluator, its tests, and this checkpoint changed. Samsung touch modes, hints, saved circuits, Basic Wiring, progress pages, and LOTO were not modified. Vercel READY is not a browser or real-device test; secure employee progress and instructor reporting remain pending.
+
 ## 2026-11-02 — reject malformed basic wiring device IDs
 - Hardened only `basic-validation.js`: Basic Wiring now rejects null/non-object device entries and IDs that are not safe integers, rather than allowing fractional or unsafe-number IDs to form a passing circuit. This protects the educational circuit evaluator against malformed imported/saved circuit data without changing valid wiring behavior.
 - Added five regression cases to `tests/basic-validation.test.js` (null devices, missing ID, fractional ID and unsafe integer ID), retaining all ten existing cases. Reproduced the previous evaluator passing two otherwise correctly wired circuits with invalid numeric IDs, then ran the updated exact GitHub source and test files in Node 22: **15 passed, 0 failed**. Local git blob hashes matched the GitHub blobs for both files (`4fecd226074f307ccc08107f6ff84aab19d5c64d`, `7ed3968fb97a85727e1267c1a44dad37454266ea`). These are isolated evaluator tests, not rendered browser tests.
