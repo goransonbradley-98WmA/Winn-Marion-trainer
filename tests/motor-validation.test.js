@@ -92,3 +92,21 @@ test('rejects malformed motor device IDs without accepting an otherwise valid ci
     assert.equal(evaluate(d,changed).reason,'invalid circuit',String(id));
   }
 });
+
+test('malformed IDs are rejected for START, coil and AUX as well as STOP',()=>{
+  for(const index of [1,2,3]){
+    const d=devices(),edges=normal(),old=String(d[index].id);
+    d[index].id=index===1?'  ':index===2?1.5:Number.MAX_SAFE_INTEGER+1;
+    const replacement=String(d[index].id);
+    const rewired=edges.map(edge=>w(edge.a.replace(new RegExp('^'+old+':'),replacement+':'),edge.b.replace(new RegExp('^'+old+':'),replacement+':')));
+    assert.equal(evaluate(d,rewired).reason,'invalid circuit',d[index].type);
+  }
+});
+test('valid numeric-string device IDs preserve working circuit behavior',()=>{
+  const d=devices().map(device=>({...device,id:String(device.id)}));
+  assert.equal(evaluate(d,normal()).result,'pass');
+});
+test('string and numeric forms of the same ID cannot coexist',()=>{
+  const d=devices();d.push({id:'1',type:'aux'});
+  assert.equal(evaluate(d,normal()).reason,'invalid circuit');
+});
