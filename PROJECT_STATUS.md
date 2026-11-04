@@ -4,7 +4,7 @@
 - Added three regression tests in `tests/motor-validation.test.js` covering malformed START/coil/AUX identifiers with terminal rewiring, valid numeric-string IDs, and numeric/string duplicate IDs. This extends the prior STOP-ID coverage without changing evaluator or UI logic.
 - Ran focused evaluator probes against the fetched current GitHub source in an isolated JavaScript runtime: blank START, fractional coil and duplicate string IDs were rejected; valid numeric-string IDs passed (4/4). The full Node suite was not run because the container could not resolve github.com and no repository checkout was available.
 - Test commit on `main`: `e8a8ac78cc35929c4da7f95490813767dc92edd3`. No changes to Samsung touch interactions, hints, saved circuits, Basic Wiring, student progress, or LOTO.
-- Vercel production deployment for this commit was not yet visible when checked. Last verified READY deployment remained the November 3 checkpoint `13aee2aa46f430b7a7d30f5544327bde93a72082`. Do not treat the new commit as deployed until a matching READY deployment is confirmed.
+- Vercel production deployment `dpl_4RLkwYvkXPhLbbRvU7wsxgGKgdpa` verified READY with matching GitHub commit `e8a8ac78cc35929c4da7f95490813767dc92edd3`. Versioned test URL: https://electrical-training-e24r3y8dw-winn-marion.vercel.app/motor.html. This is deployment status, not a rendered browser or Samsung test.
 - Stable site: https://electrical-training-pro-winn-marion.vercel.app/motor.html
 - Limitations: Vercel READY does not verify browser load or physical Samsung behavior. Employee authentication and shared instructor reporting remain pending.
 
