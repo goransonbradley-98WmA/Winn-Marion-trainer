@@ -110,3 +110,14 @@ test('string and numeric forms of the same ID cannot coexist',()=>{
   const d=devices();d.push({id:'1',type:'aux'});
   assert.equal(evaluate(d,normal()).reason,'invalid circuit');
 });
+
+test('rejects a supply short that appears only while START is pressed',()=>{
+  const edges=normal();
+  edges.push(w('2:R','L2'));
+  assert.equal(evaluate(devices(),edges).reason,'supply short');
+});
+test('rejects a supply short through the closed AUX holding contact',()=>{
+  const edges=normal();
+  edges.push(w('4:R','L2'));
+  assert.equal(evaluate(devices(),edges).reason,'supply short');
+});
