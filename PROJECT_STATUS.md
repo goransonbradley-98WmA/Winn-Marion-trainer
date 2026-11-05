@@ -1,5 +1,12 @@
 # Winn-Marion Electrical Training Pro — project status
 
+## 2026-11-05 — motor supply-short state regression tests
+- Added two focused regression tests in `tests/motor-validation.test.js` to assert rejection of an L1-L2 short that occurs only when START is pressed, and a short that occurs when the AUX holding contact closes. Both use the existing known-good three-wire circuit with one additional unsafe wire.
+- Ran four isolated evaluator probes against the exact current GitHub `motor-validation.js`: valid reference circuit passed, START-dependent short rejected, AUX-dependent short rejected, and malformed-wire signature returned a string (4/4). This is not a full Node suite or rendered browser test.
+- Test commit on `main`: `1994a40995b6a7388f283dae6bee09e7ba9f9f6d`.
+- Vercel production deployment `dpl_61sXpHH8cFbjWNymgSQR7h4hRY5v` was INITIALIZING on first check; readiness must be confirmed separately. Versioned test URL: https://electrical-training-9ze3mak4x-winn-marion.vercel.app/motor.html
+- Only test coverage changed. Samsung touch interactions, guided hints, saved circuits, Basic Wiring, progress tracking, motor visuals and LOTO remain untouched. Actual Samsung testing and secure instructor gradebook remain pending.
+
 ## 2026-11-04 — expanded motor device-ID regression coverage
 - Added three regression tests in `tests/motor-validation.test.js` covering malformed START/coil/AUX identifiers with terminal rewiring, valid numeric-string IDs, and numeric/string duplicate IDs. This extends the prior STOP-ID coverage without changing evaluator or UI logic.
 - Ran focused evaluator probes against the fetched current GitHub source in an isolated JavaScript runtime: blank START, fractional coil and duplicate string IDs were rejected; valid numeric-string IDs passed (4/4). The full Node suite was not run because the container could not resolve github.com and no repository checkout was available.
