@@ -121,3 +121,18 @@ test('rejects a supply short through the closed AUX holding contact',()=>{
   edges.push(w('4:R','L2'));
   assert.equal(evaluate(devices(),edges).reason,'supply short');
 });
+
+test('reversing every wire endpoint preserves valid control operation',()=>{
+  assert.equal(evaluate(devices(),normal().map(edge=>w(edge.b,edge.a))).result,'pass');
+});
+test('duplicate identical wire does not change the circuit result',()=>{
+  const edges=normal();
+  edges.push({...edges[0]});
+  assert.equal(evaluate(devices(),edges).result,'pass');
+});
+test('START-dependent supply short is detected from either START terminal',()=>{
+  assert.equal(evaluate(devices(),[...normal(),w('2:L','L2')]).reason,'supply short');
+});
+test('AUX-dependent supply short is detected from either AUX terminal',()=>{
+  assert.equal(evaluate(devices(),[...normal(),w('4:L','L2')]).reason,'supply short');
+});
