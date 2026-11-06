@@ -1,5 +1,12 @@
 # Winn-Marion Electrical Training Pro — project status
 
+## 2026-11-06 — motor topology regression coverage
+- Added four regression tests to `tests/motor-validation.test.js`: reversed wire endpoints and duplicate identical wires preserve a valid three-wire circuit; START and AUX alternate-terminal L1-L2 shorts are rejected.
+- Executed four focused evaluator probes against the exact fetched `motor-validation.js` in an isolated JavaScript runtime; all four matched expected outcomes (2 passes and 2 supply-short failures). The full Node suite and rendered-browser/physical Samsung tests were not run.
+- Application test commit on `main`: `499f5b22553a20f8631ce0c66b702278d3671168`. Vercel production deployment `dpl_6RKvacANHhPZLa9RczgPNkJkVRQL` confirmed READY with matching commit. Versioned test URL: https://electrical-training-pgfk4bjt3-winn-marion.vercel.app/motor.html
+- Only test coverage changed; motor/basic evaluators, Samsung touch controls, hints, saved circuits, student progress, animations and LOTO were not modified. Vercel READY does not prove actual browser functionality. Employee authentication and shared instructor records remain pending.
+
+
 ## 2026-11-05 — motor supply-short state regression tests
 - Added two focused regression tests in `tests/motor-validation.test.js` to assert rejection of an L1-L2 short that occurs only when START is pressed, and a short that occurs when the AUX holding contact closes. Both use the existing known-good three-wire circuit with one additional unsafe wire.
 - Ran four isolated evaluator probes against the exact current GitHub `motor-validation.js`: valid reference circuit passed, START-dependent short rejected, AUX-dependent short rejected, and malformed-wire signature returned a string (4/4). This is not a full Node suite or rendered browser test.
