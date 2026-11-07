@@ -27,3 +27,15 @@ for(const id of [2.5,Number.MAX_SAFE_INTEGER+1]){
   assert.equal(evaluate(devices,wires).result,'fail');
  });
 }
+
+// Saved/imported circuit IDs must match the positive integer IDs issued by the trainer.
+for(const [label,kind,id] of [
+ ['zero switch ID','start',0],
+ ['negative switch ID','start',-1],
+ ['zero load ID','coil',0],
+ ['negative load ID','coil',-3],
+])test(label+' cannot pass a complete circuit',()=>{
+ const devices=[{id:kind==='start'?id:2,type:'start'},{id:kind==='coil'?id:3,type:'coil'}];
+ const wires=w(['L1',devices[0].id+':L'],[devices[0].id+':R',devices[1].id+':L'],[devices[1].id+':R','L2']);
+ assert.equal(evaluate(devices,wires).result,'fail');
+});
