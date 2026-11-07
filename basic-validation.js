@@ -3,7 +3,7 @@
 'use strict';
 function evaluate(devices,wires){
  const fail=message=>({result:'fail',reason:'basic circuit',message});
- if(!Array.isArray(devices)||!Array.isArray(wires)||devices.length!==2||devices.filter(d=>d&&d.type==='start').length!==1||devices.filter(d=>d&&d.type==='coil').length!==1||devices.some(d=>!d||typeof d!=='object'||!Number.isSafeInteger(d.id))||new Set(devices.map(d=>d.id)).size!==2)return fail('Use exactly one switch and one motor load.');
+ if(!Array.isArray(devices)||!Array.isArray(wires)||devices.length!==2||devices.filter(d=>d&&d.type==='start').length!==1||devices.filter(d=>d&&d.type==='coil').length!==1||devices.some(d=>!d||typeof d!=='object'||(!Number.isSafeInteger(d.id)||d.id<1))||new Set(devices.map(d=>d.id)).size!==2)return fail('Use exactly one switch and one motor load.');
  const pins=new Set(['L1','L2',...devices.flatMap(d=>[d.id+':L',d.id+':R'])]);
  if(wires.some(w=>!w||!pins.has(w.a)||!pins.has(w.b)||w.a===w.b))return fail('A wire has an invalid terminal. Remove it and reconnect.');
  const sw=devices.find(d=>d.type==='start'),load=devices.find(d=>d.type==='coil');
