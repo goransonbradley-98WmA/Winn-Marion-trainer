@@ -1,5 +1,14 @@
 # Winn-Marion Electrical Training Pro — project status
 
+## 2026-11-07 — reject zero and negative Basic Wiring device IDs
+- Fixed a real Basic Wiring false positive: the previous evaluator passed otherwise correctly wired circuits whose device ID was zero or negative, even though the simulator generates positive integer IDs. `basic-validation.js` now requires each device ID to be a positive safe integer.
+- Added four regression cases to `tests/basic-validation.test.js`: zero and negative IDs on both the switch and motor load. Reproduced passing invalid switch IDs (0, -1, -3) against the prior evaluator; all are rejected by the new evaluator.
+- Executed all 19 Basic Wiring and 38 Motor Controls test bodies (57/57 passed) using an isolated JavaScript harness with assertions against the exact fetched source. This is not the Node test runner or a rendered browser test.
+- GitHub main application commits: validator `5c6d1efb7db59b8a8647c00e2b5a84dfffc1d2dd`; regression tests `d9ed13c14f6b0f7ca1bd2775c9940b0367b79e6d`.
+- Vercel production deployment `dpl_GGzgeApJNcmaG4S6Unsw6NuEjRJg` confirmed READY for the matching test commit and stable production alias. Direct Vercel fetch returned HTTP 200 for `/basic-wiring.html` and `/basic-validation.js`; deployed JavaScript contains the new positive-ID guard.
+- Stable test URL: https://electrical-training-pro-winn-marion.vercel.app/basic-wiring.html . Versioned deployment: https://electrical-training-nzikqudjj-winn-marion.vercel.app/basic-wiring.html .
+- No changes to Samsung touch controls, guided hints, saved circuits, motor feedback, student progress, separate trainer pages or LOTO. Actual rendered browser/Samsung tests, secure employee accounts and shared instructor records remain outstanding. This remains an educational circuit evaluator, not a field safety certification.
+
 ## 2026-11-06 — motor topology regression coverage
 - Added four regression tests to `tests/motor-validation.test.js`: reversed wire endpoints and duplicate identical wires preserve a valid three-wire circuit; START and AUX alternate-terminal L1-L2 shorts are rejected.
 - Executed four focused evaluator probes against the exact fetched `motor-validation.js` in an isolated JavaScript runtime; all four matched expected outcomes (2 passes and 2 supply-short failures). The full Node suite and rendered-browser/physical Samsung tests were not run.
