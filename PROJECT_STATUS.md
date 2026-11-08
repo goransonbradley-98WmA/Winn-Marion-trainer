@@ -1,5 +1,14 @@
 # Winn-Marion Electrical Training Pro — project status
 
+## 2026-11-08 — reject nonpositive numeric Motor Controls device IDs
+- Fixed a confirmed Motor Controls false positive: an otherwise correctly wired three-wire circuit with STOP ID 0 or -1 previously returned PASS. The motor evaluator now requires positive safe integers for numeric device IDs, matching the Basic Wiring numeric-ID guard. Existing nonblank string-ID compatibility remains unchanged.
+- Added a regression test covering zero and negative numeric IDs on STOP, START, M coil and AUX, with the circuit endpoints rewired to the invalid IDs so failures cannot be attributed to dangling wires (8 assertions).
+- Re-fetched the committed evaluator and tests from GitHub `main` and executed all 39 Motor Controls and 19 Basic Wiring test bodies in an isolated JavaScript harness: **58/58 passed**. This is not the Node test runner, a rendered browser test, or a physical Samsung test.
+- Application commits: evaluator `744b9b5c0466e8c2b1f452bbf131023b19ce4eba`; regression test `473393629b16af71e42b58e0331e50b284cb4ab9`.
+- Vercel production deployment `dpl_4ggTosHScMD7rKBQ42daLWv4ntNf` confirmed **READY**, matching regression-test commit. The versioned `/motor.html` and `/motor-validation.js` returned HTTP 200; the stable production `/motor-validation.js` also returned HTTP 200 and contains the new guard.
+- Stable test URL: https://electrical-training-pro-winn-marion.vercel.app/motor.html . Versioned test URL: https://electrical-training-5ni9ldwlv-winn-marion.vercel.app/motor.html .
+- Only the motor evaluator, its tests and this checkpoint changed. Samsung touch controls, guided hints, saved circuits, green/smoking motor feedback, separate Basic Wiring trainer, progress dashboard and LOTO were not modified. Full Node test-runner, rendered-browser and actual Samsung tests remain outstanding; employee authentication and shared instructor reporting are not implemented. The evaluator is educational and not field safety certification.
+
 ## 2026-11-07 — reject zero and negative Basic Wiring device IDs
 - Fixed a real Basic Wiring false positive: the previous evaluator passed otherwise correctly wired circuits whose device ID was zero or negative, even though the simulator generates positive integer IDs. `basic-validation.js` now requires each device ID to be a positive safe integer.
 - Added four regression cases to `tests/basic-validation.test.js`: zero and negative IDs on both the switch and motor load. Reproduced passing invalid switch IDs (0, -1, -3) against the prior evaluator; all are rejected by the new evaluator.
