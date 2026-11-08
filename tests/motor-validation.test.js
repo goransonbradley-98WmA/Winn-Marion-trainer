@@ -136,3 +136,17 @@ test('START-dependent supply short is detected from either START terminal',()=>{
 test('AUX-dependent supply short is detected from either AUX terminal',()=>{
   assert.equal(evaluate(devices(),[...normal(),w('4:L','L2')]).reason,'supply short');
 });
+
+test('numeric device IDs must be positive for STOP, START, coil and AUX',()=>{
+  for(const index of [0,1,2,3]){
+    for(const id of [0,-1]){
+      const d=devices(),edges=normal(),original=String(d[index].id);
+      d[index].id=id;
+      const rewired=edges.map(edge=>w(
+        edge.a.replace(new RegExp('^'+original+':'),id+':'),
+        edge.b.replace(new RegExp('^'+original+':'),id+':')
+      ));
+      assert.equal(evaluate(d,rewired).reason,'invalid circuit',d[index].type+' ID '+id);
+    }
+  }
+});
