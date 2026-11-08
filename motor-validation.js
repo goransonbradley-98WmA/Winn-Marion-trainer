@@ -21,7 +21,7 @@ function evaluate(devices,wires){
   const terminals=new Set(['L1','L2']);
   const seenIds=new Set();
   for(const d of devices){
-    if(!d||typeof d!=='object'||!validTypes.has(d.type)||!(typeof d.id==='string'&&d.id.trim()||typeof d.id==='number'&&Number.isSafeInteger(d.id))||
+    if(!d||typeof d!=='object'||!validTypes.has(d.type)||!(typeof d.id==='string'&&d.id.trim()||typeof d.id==='number'&&Number.isSafeInteger(d.id)&&d.id>0)||
        !String(d.id).trim()||String(d.id).includes(':')||seenIds.has(String(d.id))){
       return {result:'fail',reason:'invalid circuit',message:'INVALID CIRCUIT: Check device types and duplicate or missing device IDs.'};
     }
