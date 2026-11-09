@@ -1,5 +1,12 @@
 # Winn-Marion Electrical Training Pro — project status
 
+## 2026-11-09 — Basic Wiring regression protection for touch-drawn circuits
+- Added five Basic Wiring regression tests: reversing every wire endpoint still passes, an identical duplicate wire still passes, an L1-to-L2 short that appears only when the switch closes fails, a wire to a nonexistent terminal fails, and evaluating a circuit does not mutate its devices or wires.
+- Re-fetched the exact committed evaluator and test files from GitHub `main` and executed **63/63 synchronous assertions/test bodies** (24 Basic Wiring, 39 Motor Controls) in an isolated JavaScript harness with Node-compatible test/assert shims. This is **not** the native Node test runner, a rendered browser, or a physical Samsung test.
+- Application test commit: `ee30e23c9f27e5ff7ff97f6f41e5ade79672aca2`. Vercel production deployment `dpl_732bSdG727Xw7QbAgAZkhCzq5hDf` confirmed **READY**, matching that exact application commit. Versioned test URL: https://electrical-training-rmn01pr07-winn-marion.vercel.app/basic-wiring.html . Stable URL: https://electrical-training-pro-winn-marion.vercel.app/basic-wiring.html .
+- Browser retrieval of both URLs was unavailable through the web fetch tool; READY establishes deployment status, not successful page load or touch behavior. Only regression tests and this checkpoint changed. The approved Samsung controls, guided hints, saved circuits, motor green/smoking feedback, separate Basic Wiring and Motor Controls pages, student progress, and LOTO were not modified.
+- Next: native Node test execution and physical Samsung verification; then instructor-facing progress reporting with secure employee accounts. Practice records remain browser-local, and circuit evaluation is educational, not a field safety certification.
+
 ## 2026-11-08 — reject nonpositive numeric Motor Controls device IDs
 - Fixed a confirmed Motor Controls false positive: an otherwise correctly wired three-wire circuit with STOP ID 0 or -1 previously returned PASS. The motor evaluator now requires positive safe integers for numeric device IDs, matching the Basic Wiring numeric-ID guard. Existing nonblank string-ID compatibility remains unchanged.
 - Added a regression test covering zero and negative numeric IDs on STOP, START, M coil and AUX, with the circuit endpoints rewired to the invalid IDs so failures cannot be attributed to dangling wires (8 assertions).
