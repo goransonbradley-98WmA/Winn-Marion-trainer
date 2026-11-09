@@ -39,3 +39,12 @@ for(const [label,kind,id] of [
  const wires=w(['L1',devices[0].id+':L'],[devices[0].id+':R',devices[1].id+':L'],[devices[1].id+':R','L2']);
  assert.equal(evaluate(devices,wires).result,'fail');
 });
+
+test('reversed endpoints on all basic wires still pass',()=>assert.equal(evaluate(d,good().map(edge=>({a:edge.b,b:edge.a}))).result,'pass'));
+test('duplicate basic wire does not fail a correct circuit',()=>assert.equal(evaluate(d,[...good(),{...good()[0]}]).result,'pass'));
+test('switch-closed supply short is rejected',()=>assert.equal(evaluate(d,[...good(),{a:'2:R',b:'L2'}]).result,'fail'));
+test('invalid extra wire does not pass',()=>assert.equal(evaluate(d,[...good(),{a:'L1',b:'77:R'}]).result,'fail'));
+test('basic evaluation does not mutate the saved circuit',()=>{
+ const devices=d.map(x=>({...x})),edges=good(),before=JSON.stringify([devices,edges]);
+ evaluate(devices,edges);assert.equal(JSON.stringify([devices,edges]),before);
+});
