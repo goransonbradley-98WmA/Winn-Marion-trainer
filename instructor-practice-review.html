@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#08273d">
+<title>Instructor Practice Review | Winn-Marion Electrical Training Pro</title>
+<style>
+:root{font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#ecf7ff;background:#081c2d}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:linear-gradient(155deg,#081c2d,#174c70)}
+header{padding:17px max(18px,4vw);background:#061826;border-bottom:2px solid #65b5dd;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+header strong{letter-spacing:.07em}header small{display:block;color:#a4d4ed;letter-spacing:.12em;font-size:11px;margin-top:4px}
+a{color:#9edcff}header a{border:1px solid #78b6d5;border-radius:9px;padding:10px 13px;text-decoration:none}
+main{max-width:960px;margin:auto;padding:22px 16px 55px}h1{font-size:clamp(27px,5vw,40px);margin:8px 0}
+.lead{color:#d3e6f4;line-height:1.55;max-width:800px}
+.notice{border-left:4px solid #f4b74e;background:#153951;padding:14px 16px;border-radius:8px;line-height:1.5;margin:18px 0}
+.panel{background:#10334d;border:1px solid #5286a4;border-radius:14px;padding:20px;margin:18px 0}
+label{display:block;font-weight:650;margin-bottom:12px}
+input[type=file]{display:block;width:100%;max-width:600px;padding:14px;background:#071e2f;border:1px solid #83b8d6;border-radius:8px;color:#e9f7ff;font:inherit}
+button{border:0;border-radius:9px;background:#196b99;color:white;padding:11px 16px;font:inherit;cursor:pointer;margin-top:12px}
+button:focus-visible,input:focus-visible{outline:3px solid #f4b74e;outline-offset:3px}
+#status{min-height:24px;color:#e4d8a8}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.card{background:#10334d;border:1px solid #5286a4;border-radius:12px;padding:18px}
+.card h2{margin:0 0 12px;font-size:21px}.card strong{font-size:29px}
+.muted{color:#c1d9e9;font-size:14px;line-height:1.5}
+table{border-collapse:collapse;width:100%}th,td{padding:10px 8px;text-align:left;border-bottom:1px solid #37637e;font-size:14px;overflow-wrap:anywhere}
+th{color:#a8d6f0}.tablewrap{overflow-x:auto}.pass{color:#87e8b3}.fail{color:#ffca86}
+[hidden]{display:none!important}
+@media(max-width:560px){.panel{padding:15px}main{padding:16px 12px 40px}}
+</style>
+</head>
+<body>
+<header><div><strong>WINN-MARION</strong><small>ELECTRICAL TRAINING PRO · REVIEW PREVIEW</small></div><a href="/student-progress.html">← Practice progress</a></header>
+<main>
+<h1>Instructor practice review</h1>
+<p class="lead">Review a student's exported Motor Controls and Basic Wiring practice history without changing the original circuits or results. The student must choose to share a combined JSON export from their practice progress page.</p>
+<div class="notice"><strong>Unverified practice only — not an instructor gradebook.</strong> Files are read locally in this page, not uploaded, saved, or linked to an employee account. Anyone could alter a JSON file. Do not use these results for certification, authorization to work, or employee grading.</div>
+<section class="panel" aria-labelledby="import-title">
+<h2 id="import-title">Open combined practice export</h2>
+<label for="practiceFile">Select a wm-training-practice JSON file (maximum 1 MB)</label>
+<input id="practiceFile" type="file" accept=".json,application/json">
+<button id="clearReview" type="button">Clear review</button>
+<p id="status" role="status" aria-live="polite">No file selected. The file remains on this device.</p>
+</section>
+<section id="review" hidden aria-label="Imported practice results">
+<p id="meta" class="muted"></p>
+<div id="summaries" class="cards"></div>
+<div class="panel"><h2>Recent attempts by trainer</h2><div id="recent"></div></div>
+</section>
+<p class="muted">Supported file: <code>wm-training-practice-bundle-v1</code> from the combined export button. Single-trainer exports are intentionally not accepted. Instructor authentication and verified shared records are future work.</p>
+</main>
+<script src="/practice-import.js"></script>
+<script>
+(function(){
+'use strict';
+var input=document.getElementById('practiceFile'),status=document.getElementById('status'),review=document.getElementById('review');
+function node(tag,value,className){var el=document.createElement(tag);if(value!==undefined)el.textContent=String(value);if(className)el.className=className;return el}
+function reset(){review.hidden=true;document.getElementById('meta').textContent='';document.getElementById('summaries').replaceChildren();document.getElementById('recent').replaceChildren()}
+function date(value){return value?new Date(value).toLocaleString():'Unknown date'}
+function show(data){
+ document.getElementById('meta').textContent='Exported '+date(data.exportedAt)+' · Browser-local · Unverified';
+ var cards=document.getElementById('summaries'),recent=document.getElementById('recent');
+ data.trainers.forEach(function(t){
+  var card=node('section',undefined,'card');
+  card.append(node('h2',t.label),node('strong',t.total+' tests'),
+    node('p',t.passed+' passed · '+t.failed+' failed · '+(t.rate===null?'No pass rate':t.rate+'% pass rate')),
+    node('p',t.unique+' tracked distinct circuit signatures','muted'));
+  cards.append(card);
+  var heading=node('h3',t.label);recent.append(heading);
+  if(!t.attempts.length){recent.append(node('p','No recorded attempts.','muted'));return}
+  var wrap=node('div',undefined,'tablewrap'),table=node('table'),head=node('tr');
+  ['Date / time','Result','Troubleshooting result'].forEach(function(h){head.append(node('th',h))});
+  var thead=node('thead');thead.append(head);table.append(thead);
+  var tbody=node('tbody');
+  t.attempts.forEach(function(a){
+   var tr=node('tr');
+   tr.append(node('td',date(a.at)),node('td',a.result.toUpperCase(),a.result==='pass'?'pass':'fail'),node('td',a.reason));
+   tbody.append(tr);
+  });
+  table.append(tbody);wrap.append(table);recent.append(wrap);
+ });
+ review.hidden=false;
+}
+input.addEventListener('change',async function(){
+ reset();status.textContent='Reading local file…';
+ var file=input.files&&input.files[0];
+ if(!file){status.textContent='No file selected.';return}
+ if(file.size>1048576){status.textContent='File exceeds the 1 MB limit.';return}
+ try{
+  var data=WMPracticeImport.parseBundle(JSON.parse(await file.text()));
+  show(data);
+  status.textContent='Unverified practice file loaded for read-only review. No upload or storage occurred.';
+ }catch(e){reset();status.textContent='Unable to review file: '+(e instanceof SyntaxError?'Invalid JSON.':e.message)}
+});
+document.getElementById('clearReview').addEventListener('click',function(){input.value='';reset();status.textContent='Review cleared from this page.'});
+})();
+</script>
+</body>
+</html>
