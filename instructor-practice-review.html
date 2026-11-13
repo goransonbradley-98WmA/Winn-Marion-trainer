@@ -66,7 +66,7 @@ function show(data){
   var card=node('section',undefined,'card');
   card.append(node('h2',t.label),node('strong',t.total+' tests'),
     node('p',t.passed+' passed · '+t.failed+' failed · '+(t.rate===null?'No pass rate':t.rate+'% pass rate')),
-    node('p',t.unique+' tracked distinct circuit signatures','muted'));
+    node('p',t.total===0?'No practice circuits to compare.':t.unique===null?'Circuit signatures unavailable or incomplete ('+t.signatureCount+' of '+t.total+' attempts recorded).':t.unique+' distinct circuit signatures','muted'));
   cards.append(card);
   var heading=node('h3',t.label);recent.append(heading);
   if(!t.attempts.length){recent.append(node('p','No recorded attempts.','muted'));return}
