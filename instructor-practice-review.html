@@ -55,6 +55,7 @@ th{color:#a8d6f0}.tablewrap{overflow-x:auto}.pass{color:#87e8b3}.fail{color:#ffc
 (function(){
 'use strict';
 var input=document.getElementById('practiceFile'),status=document.getElementById('status'),review=document.getElementById('review');
+var importVersion=0; // Invalidate earlier asynchronous file reads after a new selection or Clear.
 function node(tag,value,className){var el=document.createElement(tag);if(value!==undefined)el.textContent=String(value);if(className)el.className=className;return el}
 function reset(){review.hidden=true;document.getElementById('meta').textContent='';document.getElementById('summaries').replaceChildren();document.getElementById('recent').replaceChildren()}
 function date(value){return value?new Date(value).toLocaleString():'Unknown date'}
@@ -83,17 +84,20 @@ function show(data){
  review.hidden=false;
 }
 input.addEventListener('change',async function(){
+ var version=++importVersion;
  reset();status.textContent='Reading local file…';
  var file=input.files&&input.files[0];
  if(!file){status.textContent='No file selected.';return}
  if(file.size>1048576){status.textContent='File exceeds the 1 MB limit.';return}
  try{
-  var data=WMPracticeImport.parseBundle(JSON.parse(await file.text()));
+  var contents=await file.text();
+  if(version!==importVersion)return;
+  var data=WMPracticeImport.parseBundle(JSON.parse(contents));
   show(data);
   status.textContent='Unverified practice file loaded for read-only review. No upload or storage occurred.';
- }catch(e){reset();status.textContent='Unable to review file: '+(e instanceof SyntaxError?'Invalid JSON.':e.message)}
+ }catch(e){if(version!==importVersion)return;reset();status.textContent='Unable to review file: '+(e instanceof SyntaxError?'Invalid JSON.':e.message)}
 });
-document.getElementById('clearReview').addEventListener('click',function(){input.value='';reset();status.textContent='Review cleared from this page.'});
+document.getElementById('clearReview').addEventListener('click',function(){importVersion++;input.value='';reset();status.textContent='Review cleared from this page.'});
 })();
 </script>
 </body>
