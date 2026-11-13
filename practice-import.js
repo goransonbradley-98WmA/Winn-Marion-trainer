@@ -22,11 +22,11 @@
       var record=value.trainers[spec.id];
       if(!object(record)||record.format!==spec.format||!Array.isArray(record.attempts))throw new Error('Invalid '+spec.label+' records.');
       if(record.attempts.length>200)throw new Error(spec.label+' exceeds the 200-attempt export limit.');
-      var passed=0,signatures=new Set();
+      var passed=0,signatures=new Set(),signatureCount=0;
       var attempts=record.attempts.map(function(a){
         if(!object(a)||(a.result!=='pass'&&a.result!=='fail'))throw new Error('Invalid '+spec.label+' attempt.');
         if(a.result==='pass')passed++;
-        if(typeof a.signature==='string'&&a.signature.length)signatures.add(a.signature);
+        if(typeof a.signature==='string'&&a.signature.length){signatures.add(a.signature);signatureCount++}
         return {
           result:a.result,
           at:typeof a.at==='string'&&Number.isFinite(Date.parse(a.at))?a.at:null,
@@ -35,7 +35,8 @@
       });
       return {id:spec.id,label:spec.label,total:attempts.length,passed:passed,failed:attempts.length-passed,
         rate:attempts.length?Math.round(100*passed/attempts.length):null,
-        unique:signatures.size,attempts:attempts.slice(-10).reverse()};
+        unique:attempts.length&&signatureCount===attempts.length?signatures.size:null,
+        signatureCount:signatureCount,attempts:attempts.slice(-10).reverse()};
     });
     return {exportedAt:value.exportedAt,verified:false,source:'browser-local',trainers:trainers};
   }
