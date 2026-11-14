@@ -1,5 +1,12 @@
 # Winn-Marion Electrical Training Pro — project status
 
+## 2026-11-14 — instructor practice importer boundary regression coverage
+- Added `tests/practice-import-boundaries.test.cjs` with three native Node 22 regression tests for the existing read-only instructor practice parser: recent-attempt view capped at 10 newest records while full totals remain correct; Motor Controls and Basic Wiring histories and rounded pass rates remain independent; malformed attempt dates and overlong reason text are sanitized without mutating source records.
+- All 3/3 new tests passed under native Node 22 against a manually reconstructed local copy of `practice-import.js` based on the current GitHub `main` fetch. The committed test file was re-fetched and its content visually compared; the parser copy was not cryptographically compared to the GitHub blob. This is focused coverage, not the complete repository suite, browser/file-picker testing, or physical Samsung testing.
+- Test-only GitHub `main` commit: `76a8e1c485ef0d9d1e3ccf7e010381ef804bde1d`. No production simulator or importer code changed; approved Samsung touch controls, guided hints, saved circuits, motor animations, separate trainers, student storage and LOTO remain untouched.
+- Vercel production build initiated automatically for the test commit; deployment readiness must be confirmed independently. Stable test URL: https://electrical-training-pro-winn-marion.vercel.app/instructor-practice-review.html . GitHub DNS remains unavailable in the local container, preventing a full clone. Next: run complete native tests against a verified checkout, rendered browser and Samsung checks, then authenticated student/instructor records with imported practice kept unverified.
+
+
 
 ## 2026-11-13 — accurate circuit-signature coverage in instructor practice review
 - Fixed a misleading practice-review metric: normal simulator attempt records do not currently include circuit signatures, so the previous display of `0 tracked distinct circuit signatures` incorrectly suggested zero distinct circuits. The read-only importer now reports a distinct count only when every attempt in that trainer has a nonempty signature; otherwise it reports unavailable/incomplete coverage (`signatureCount` of total attempts). Empty histories say there are no attempts to compare. This does not infer circuit identity or turn imported practice into verified grades.
