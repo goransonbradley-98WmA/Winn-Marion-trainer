@@ -1,5 +1,12 @@
 # Winn-Marion Electrical Training Pro — project status
 
+## 2026-11-15 — importer 200-attempt boundary regression coverage
+- Added `tests/practice-import-limits.test.cjs` with four native Node tests: each trainer accepts exactly 200 attempts with accurate totals and newest-ten preview, and rejects 201 attempts rather than silently truncating evidence.
+- Ran **4/4 tests passed** under local Node against a manually reconstructed copy of the current `practice-import.js` fetched from GitHub main. This is focused validation, **not** a byte-verified checkout, complete repository suite, rendered-browser, or physical Samsung test.
+- Test-only commit on `main`: `e4f92caebbace7775af02f10dcf5d58f07ef541f`. No simulator, touch, hint, saved-circuit, motor animation, LOTO, or student storage code changed.
+- Stable instructor review test URL: https://electrical-training-pro-winn-marion.vercel.app/instructor-practice-review.html . Vercel deployment readiness must be checked separately. Container GitHub DNS still prevents cloning. Next: full regression suite from a verified checkout, browser/Samsung interaction, then secure student/instructor identities while practice imports remain unverified.
+
+
 ## 2026-11-14 — instructor practice importer boundary regression coverage
 - Added `tests/practice-import-boundaries.test.cjs` with three native Node 22 regression tests for the existing read-only instructor practice parser: recent-attempt view capped at 10 newest records while full totals remain correct; Motor Controls and Basic Wiring histories and rounded pass rates remain independent; malformed attempt dates and overlong reason text are sanitized without mutating source records.
 - All 3/3 new tests passed under native Node 22 against a manually reconstructed local copy of `practice-import.js` based on the current GitHub `main` fetch. The committed test file was re-fetched and its content visually compared; the parser copy was not cryptographically compared to the GitHub blob. This is focused coverage, not the complete repository suite, browser/file-picker testing, or physical Samsung testing.
