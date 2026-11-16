@@ -26,7 +26,7 @@
       var attempts=record.attempts.map(function(a){
         if(!object(a)||(a.result!=='pass'&&a.result!=='fail'))throw new Error('Invalid '+spec.label+' attempt.');
         if(a.result==='pass')passed++;
-        if(typeof a.signature==='string'&&a.signature.length){signatures.add(a.signature);signatureCount++}
+        if(typeof a.signature==='string'&&a.signature.trim().length){signatures.add(a.signature);signatureCount++}
         return {
           result:a.result,
           at:typeof a.at==='string'&&Number.isFinite(Date.parse(a.at))?a.at:null,
