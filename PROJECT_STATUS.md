@@ -1,5 +1,15 @@
 # Winn-Marion Electrical Training Pro — project status
 
+## 2026-11-16 — ignore whitespace-only circuit signature metadata
+- Fixed a small instructor-review accuracy issue: whitespace-only signature strings no longer count as recorded circuit signatures. This prevents an all-space value from being reported as complete signature coverage or contributing a false distinct-circuit count. Valid nonblank signatures and original practice records remain unchanged.
+- Added two native Node regression cases: whitespace-only signature is treated as missing; a mixture of valid and whitespace-only signatures remains incomplete rather than reporting a complete unique-circuit count.
+- Re-fetched the parser and existing test file from GitHub main before editing. Their original Git blob SHA-1 values matched the local test copies byte-for-byte. Ran node --test tests/practice-import.test.cjs under Node 22.16.0: **15/15 passed**; both files passed node --check. The final parser and test blob SHA-1 values also match the GitHub content SHAs.
+- GitHub main commits: parser fix dcc63bce3079b03f12734c4fea7df5dd9889f719; tests bd939cddb47e61b41e18cc8b02579a4b5f2b9afa.
+- Vercel production deployment dpl_PQH4rnbB7R3uiwBDDAX2AVkJm2Ww confirmed **READY**, matching parser-fix commit dcc63bce; production aliases include https://electrical-training-pro-winn-marion.vercel.app and https://electrical-training-pro.vercel.app. Test page: https://electrical-training-99oyxhjm4-winn-marion.vercel.app/instructor-practice-review.html .
+- Only practice-import.js, tests/practice-import.test.cjs, and this checkpoint changed. No simulator, circuit evaluator, Samsung touch control, guided hint, saved-circuit, motor feedback, student storage, or LOTO code changed. Native parser tests are not rendered-browser/file-picker or physical Samsung tests. Imported practice remains unverified and is not a gradebook or safety certification.
+- Next: verify instructor file-picker behavior in a real browser and on Samsung; then proceed with authenticated employee/student identities and instructor reporting without promoting imported practice to certified grades.
+
+
 ## 2026-11-15 — importer 200-attempt boundary regression coverage
 - Added `tests/practice-import-limits.test.cjs` with four native Node tests: each trainer accepts exactly 200 attempts with accurate totals and newest-ten preview, and rejects 201 attempts rather than silently truncating evidence.
 - Ran **4/4 tests passed** under local Node against a manually reconstructed copy of the current `practice-import.js` fetched from GitHub main. This is focused validation, **not** a byte-verified checkout, complete repository suite, rendered-browser, or physical Samsung test.
