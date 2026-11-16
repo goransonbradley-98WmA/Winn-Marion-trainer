@@ -21,3 +21,6 @@ test('rejects invalid export date',()=>{const b=valid();b.exportedAt='not a date
 test('does not claim zero distinct circuits when signatures are absent',()=>{const d=parseBundle(valid());assert.equal(d.trainers[1].unique,null);assert.equal(d.trainers[1].signatureCount,0)});
 test('does not present partial signature coverage as a complete distinct count',()=>{const b=valid();b.trainers['motor-controls'].attempts.push({result:'fail'});const d=parseBundle(b);assert.equal(d.trainers[0].unique,null);assert.equal(d.trainers[0].signatureCount,1)});
 test('counts distinct signatures only with complete coverage',()=>{const b=valid();b.trainers['motor-controls'].attempts.push({result:'fail',signature:'a'});const d=parseBundle(b);assert.equal(d.trainers[0].unique,1);assert.equal(d.trainers[0].signatureCount,2)});
+
+test('ignores whitespace-only circuit signatures as missing metadata',()=>{const b=valid();b.trainers['motor-controls'].attempts[0].signature='   ';const d=parseBundle(b);assert.equal(d.trainers[0].unique,null);assert.equal(d.trainers[0].signatureCount,0)});
+test('whitespace-only signature makes circuit coverage incomplete',()=>{const b=valid();b.trainers['motor-controls'].attempts.push({result:'fail',signature:'  '});const d=parseBundle(b);assert.equal(d.trainers[0].unique,null);assert.equal(d.trainers[0].signatureCount,1)});
