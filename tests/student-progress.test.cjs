@@ -126,3 +126,17 @@ test('pageshow refresh reads new local attempts without rewriting stored records
  assert.equal(app.text('passes'),'1');
  assert.equal(app.text('unique'),'1');
 });
+
+test('ignores whitespace-only circuit signatures in both trainer summaries',()=>{
+ const app=boot({[motor]:[{result:'pass',signature:'   '}],[basic]:[{result:'fail',signature:'\\t\\n'}]});
+ assert.equal(app.text('unique'),'—');
+ assert.equal(app.text('basicUnique'),'—');
+});
+test('retains valid signatures while ignoring whitespace-only entries in both trainers',()=>{
+ const app=boot({
+  [motor]:[{result:'pass',signature:'motor-circuit-a'},{result:'fail',signature:'   '}],
+  [basic]:[{result:'pass',signature:'basic-circuit-a'},{result:'fail',signature:'\\t'}]
+ });
+ assert.equal(app.text('unique'),'1');
+ assert.equal(app.text('basicUnique'),'1');
+});
