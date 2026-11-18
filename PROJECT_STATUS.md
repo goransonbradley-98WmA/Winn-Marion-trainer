@@ -1,5 +1,13 @@
 # Winn-Marion Electrical Training Pro — project status
 
+## 2026-11-18 — normalize circuit signatures in progress summaries
+- Fixed a reporting edge case in both the student progress dashboard and instructor practice importer: the same nonblank circuit signature with accidental leading/trailing whitespace could be counted as two distinct circuits. Both summaries now trim signatures before distinct-count comparison. Original browser-local histories and imported files are not rewritten; circuit evaluators, wiring behavior, and simulator controls are unchanged.
+- Added native Node regression cases to `tests/student-progress.test.cjs` and `tests/practice-import.test.cjs` for padded duplicate signatures across Motor Controls and Basic Wiring. Corrected two existing dashboard test fixtures so they contain actual tab/newline whitespace rather than literal backslash sequences.
+- Executed the exact fetched dashboard and importer test sources with focused isolated V8 harnesses before commit: **27/27 tests passed** (16 importer/parser cases and 11 simulated-DOM dashboard cases). These are focused harness runs, not the native Node test runner, rendered-browser, or physical Samsung tests.
+- GitHub main checkpoint before this change: `3275351d5630fc71380c6a708c1d0d47a53128f8`. Application/test/checkpoint commit and Vercel deployment readiness will be recorded after the commit and deployment are independently verified.
+- Only `student-progress.html`, `practice-import.js`, the two corresponding test files, and this checkpoint changed. Approved Samsung touch controls, guided hints, saved circuits, circuit evaluators, motor feedback, separate simulators, and LOTO remain untouched. Student practice remains browser-local and unverified; authenticated employee records and instructor gradebook remain future work.
+- Next: run the complete native Node suite from a verified checkout, then verify the dashboard and instructor file picker in a real browser and on Samsung before expanding authenticated student/instructor records.
+
 ## 2026-11-17 — exclude whitespace-only signatures from student progress
 - Closed a consistency gap in the student progress dashboard: its Motor Controls and Basic Wiring distinct-circuit summaries counted whitespace-only signature strings as tracked circuits, even though the instructor import review already treated those values as missing. Both dashboard filters now require a nonblank trimmed signature. Existing local histories are read only; no records are rewritten and no circuit evaluator or simulator behavior changed.
 - Added two regression cases to `tests/student-progress.test.cjs`: whitespace-only signatures are omitted for both trainers; valid signatures remain counted when blank metadata appears beside them.

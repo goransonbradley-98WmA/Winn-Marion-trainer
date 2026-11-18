@@ -72,7 +72,7 @@ try{
 var pass=attempts.filter(function(a){return a.result==='pass'}).length;
 var fail=attempts.length-pass;
 set('total',attemptError?'—':attempts.length);set('passes',attemptError?'—':pass);set('failures',attemptError?'—':fail);set('rate',attemptError||!attempts.length?'—':Math.round(100*pass/attempts.length)+'%');
-var signatures=new Set(attempts.filter(function(a){return typeof a.signature==='string'&&a.signature.trim().length>0}).map(function(a){return a.signature}));
+var signatures=new Set(attempts.filter(function(a){return typeof a.signature==='string'&&a.signature.trim().length>0}).map(function(a){return a.signature.trim()}));
 set('unique',attemptError?'—':signatures.size||'—');
 var reasons=document.getElementById('reasons');reasons.replaceChildren();
 var counts={};
@@ -111,7 +111,7 @@ try{
  if(basicData)basicSaved=JSON.parse(basicData);
 }catch(e){basicWorkspaceError=true}
 var basicPasses=basicAttempts.filter(function(a){return a.result==='pass'}).length;
-var basicSignatures=new Set(basicAttempts.filter(function(a){return typeof a.signature==='string'&&a.signature.trim().length>0}).map(function(a){return a.signature}));
+var basicSignatures=new Set(basicAttempts.filter(function(a){return typeof a.signature==='string'&&a.signature.trim().length>0}).map(function(a){return a.signature.trim()}));
 set('basicTotal',basicError?'—':basicAttempts.length);
 set('basicPasses',basicError?'—':basicPasses);
 set('basicFailures',basicError?'—':basicAttempts.length-basicPasses);

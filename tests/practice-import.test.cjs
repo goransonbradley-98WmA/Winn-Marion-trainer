@@ -24,3 +24,5 @@ test('counts distinct signatures only with complete coverage',()=>{const b=valid
 
 test('ignores whitespace-only circuit signatures as missing metadata',()=>{const b=valid();b.trainers['motor-controls'].attempts[0].signature='   ';const d=parseBundle(b);assert.equal(d.trainers[0].unique,null);assert.equal(d.trainers[0].signatureCount,0)});
 test('whitespace-only signature makes circuit coverage incomplete',()=>{const b=valid();b.trainers['motor-controls'].attempts.push({result:'fail',signature:'  '});const d=parseBundle(b);assert.equal(d.trainers[0].unique,null);assert.equal(d.trainers[0].signatureCount,1)});
+
+test('normalizes surrounding whitespace before counting distinct circuit signatures',()=>{const b=valid();b.trainers['motor-controls'].attempts.push({result:'fail',signature:' a '});const d=parseBundle(b);assert.equal(d.trainers[0].unique,1);assert.equal(d.trainers[0].signatureCount,2)});
