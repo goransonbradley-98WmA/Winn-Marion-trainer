@@ -48,3 +48,10 @@ test('basic evaluation does not mutate the saved circuit',()=>{
  const devices=d.map(x=>({...x})),edges=good(),before=JSON.stringify([devices,edges]);
  evaluate(devices,edges);assert.equal(JSON.stringify([devices,edges]),before);
 });
+
+test('sparse wire slot is rejected instead of being skipped by array iteration',()=>{
+ const edges=good();edges.length++;
+ const result=evaluate(d,edges);
+ assert.equal(result.result,'fail');
+ assert.match(result.message,/invalid terminal/);
+});
