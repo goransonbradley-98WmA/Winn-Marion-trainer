@@ -1,3 +1,11 @@
+## 2026-11-19 — reject sparse wire entries in Basic Wiring validation
+- Closed a malformed-input gap in the Basic Wiring evaluator. Its prior `Array.prototype.some` terminal check skipped empty slots in sparse wire arrays; a sparse slot appended to otherwise valid saved circuit data could therefore be overlooked. Validation now inspects every array index and fails any missing/invalid wire entry with the existing invalid-terminal feedback. Valid circuit topology and normal drawing behavior are unchanged.
+- Added a regression case proving a sparse wire slot fails rather than being skipped.
+- Ran the native Node test runner under Node v22.16.0: `node --test tests/basic-validation.test.js tests/trainer-isolation.test.js` — **35/35 passed** (25 Basic Wiring cases, including the new regression, plus 10 cross-trainer isolation cases). `node --check basic-validation.js` passed. The tested validator, test file, Motor Controls validator and trainer-isolation test blob SHAs were re-fetched from GitHub main and matched the local test inputs.
+- GitHub main commits: Basic Wiring fix `332747f19f0a32b1b7ce8eae1d6fab99bb5dc7f1`; regression test `e10247d4d49989de87e747a0f0de07437f348fd2`. Vercel production deployments for both commits confirmed **READY**, with Git source `main` and matching commit SHAs. Versioned Basic Wiring test page: https://electrical-training-57ukx4d0p-winn-marion.vercel.app/basic-wiring.html .
+- Only `basic-validation.js`, `tests/basic-validation.test.js`, and this checkpoint changed. Motor Controls evaluator, Samsung touch controls, guided hints, saved circuits, student progress UI/storage, motor feedback, separate simulators and LOTO were not modified. This is native unit/regression coverage, not rendered-browser or physical Samsung verification; no field-grade electrical analysis is claimed.
+- Next: run the full repository test suite from a verified checkout, then verify Basic Wiring draw/test/save/load interactions in a real browser and on Samsung before expanding shared authenticated student/instructor records.
+
 # Winn-Marion Electrical Training Pro — project status
 
 ## 2026-11-18 — normalize circuit signatures in progress summaries
