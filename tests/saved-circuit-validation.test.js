@@ -20,3 +20,11 @@ test('rejects malformed freehand point entries including sparse slots',()=>{for(
 test('rejects non-finite freehand coordinates',()=>{const s=basic();s.wires[0].points=[{x:Infinity,y:2}];assert.equal(isValidWorkspace(s),false)});
 test('rejects unsupported schema and oversized arrays',()=>{const old=basic();old.version=2;assert.equal(isValidWorkspace(old),false);const devices=basic();devices.devices=Array.from({length:101},(_,i)=>({id:i+1,type:'start',x:0,y:0}));assert.equal(isValidWorkspace(devices),false);const wires=basic();wires.wires=Array.from({length:501},()=>({a:'L1',b:'L2'}));assert.equal(isValidWorkspace(wires),false)});
 test('does not mutate valid saved workspaces',()=>{const s=basic(),before=JSON.stringify(s);isValidWorkspace(s);assert.equal(JSON.stringify(s),before)});
+
+test('accepts a normal saved viewport',()=>{const s=basic();s.view={x:0,y:0,w:900,h:480};assert.equal(isValidWorkspace(s),true)});
+test('accepts legacy version-1 workspace without saved viewport',()=>assert.equal(isValidWorkspace(basic()),true));
+test('rejects a viewport with non-finite coordinates or dimensions',()=>{for(const key of ['x','y','w','h']){const s=basic();s.view={x:0,y:0,w:900,h:480};s.view[key]=Infinity;assert.equal(isValidWorkspace(s),false,key)}});
+test('rejects zero or negative viewport height',()=>{for(const h of [0,-1]){const s=basic();s.view={x:0,y:0,w:900,h};assert.equal(isValidWorkspace(s),false)}});
+test('rejects viewport dimensions that do not match the trainer aspect ratio',()=>{const s=basic();s.view={x:0,y:0,w:900,h:900};assert.equal(isValidWorkspace(s),false)});
+test('rejects viewport width outside supported zoom limits',()=>{for(const w of [259,1801]){const s=basic();s.view={x:0,y:0,w,h:w*480/900};assert.equal(isValidWorkspace(s),false)}});
+test('rejects a malformed viewport object',()=>{for(const view of [null,[], 'bad']){const s=basic();s.view=view;assert.equal(isValidWorkspace(s),false)}});

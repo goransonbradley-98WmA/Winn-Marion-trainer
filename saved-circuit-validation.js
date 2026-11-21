@@ -2,10 +2,19 @@
 (function(root){
 'use strict';
 const allowedTypes=new Set(['stop','start','coil','aux']);
+function isValidView(view){
+  if(view===undefined)return true; // Version-1 files created before view state was saved remain loadable.
+  if(!view||typeof view!=='object'||Array.isArray(view)||
+     !Number.isFinite(view.x)||!Number.isFinite(view.y)||
+     !Number.isFinite(view.w)||!Number.isFinite(view.h)||
+     view.w<260||view.w>1800||view.h<=0)return false;
+  const expectedHeight=view.w*480/900;
+  return Math.abs(view.h-expectedHeight)<=Math.max(1e-6,expectedHeight*1e-9);
+}
 function isValidWorkspace(saved){
   if(!saved||typeof saved!=='object'||Array.isArray(saved)||saved.version!==1||
      !Array.isArray(saved.devices)||!Array.isArray(saved.wires)||
-     saved.devices.length>100||saved.wires.length>500)return false;
+     saved.devices.length>100||saved.wires.length>500||!isValidView(saved.view))return false;
   const ids=new Set();
   const terminals=new Set(['L1','L2']);
   for(let i=0;i<saved.devices.length;i++){
