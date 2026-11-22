@@ -2,10 +2,13 @@
 (function(root){
 'use strict';
 const allowedTypes=new Set(['stop','start','coil','aux']);
+// Keep malformed finite-but-extreme values from producing unusable SVG geometry.
+const MAX_COORDINATE=1000000;
+const isCoordinate=value=>Number.isFinite(value)&&Math.abs(value)<=MAX_COORDINATE;
 function isValidView(view){
   if(view===undefined)return true; // Version-1 files created before view state was saved remain loadable.
   if(!view||typeof view!=='object'||Array.isArray(view)||
-     !Number.isFinite(view.x)||!Number.isFinite(view.y)||
+     !isCoordinate(view.x)||!isCoordinate(view.y)||
      !Number.isFinite(view.w)||!Number.isFinite(view.h)||
      view.w<260||view.w>1800||view.h<=0)return false;
   const expectedHeight=view.w*480/900;
@@ -21,7 +24,7 @@ function isValidWorkspace(saved){
     const d=saved.devices[i];
     if(!d||typeof d!=='object'||Array.isArray(d)||
        !Number.isSafeInteger(d.id)||d.id<1||!allowedTypes.has(d.type)||
-       !Number.isFinite(d.x)||!Number.isFinite(d.y)||ids.has(d.id))return false;
+       !isCoordinate(d.x)||!isCoordinate(d.y)||ids.has(d.id))return false;
     ids.add(d.id);
     terminals.add(d.id+':L');
     terminals.add(d.id+':R');
@@ -36,7 +39,7 @@ function isValidWorkspace(saved){
       for(let j=0;j<w.points.length;j++){
         const p=w.points[j];
         if(!p||typeof p!=='object'||Array.isArray(p)||
-           !Number.isFinite(p.x)||!Number.isFinite(p.y))return false;
+           !isCoordinate(p.x)||!isCoordinate(p.y))return false;
       }
     }
   }
