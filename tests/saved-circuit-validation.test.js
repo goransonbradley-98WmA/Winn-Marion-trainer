@@ -28,3 +28,25 @@ test('rejects zero or negative viewport height',()=>{for(const h of [0,-1]){cons
 test('rejects viewport dimensions that do not match the trainer aspect ratio',()=>{const s=basic();s.view={x:0,y:0,w:900,h:900};assert.equal(isValidWorkspace(s),false)});
 test('rejects viewport width outside supported zoom limits',()=>{for(const w of [259,1801]){const s=basic();s.view={x:0,y:0,w,h:w*480/900};assert.equal(isValidWorkspace(s),false)}});
 test('rejects a malformed viewport object',()=>{for(const view of [null,[], 'bad']){const s=basic();s.view=view;assert.equal(isValidWorkspace(s),false)}});
+
+test('rejects finite but extreme viewport origins',()=>{
+  for(const [key,value] of [['x',1000001],['x',-1000001],['y',1e308]]){
+    const s=basic();s.view={x:0,y:0,w:900,h:480};s.view[key]=value;
+    assert.equal(isValidWorkspace(s),false);
+  }
+});
+test('rejects finite but extreme device positions',()=>{
+  for(const [key,value] of [['x',1000001],['y',-1000001]]){
+    const s=basic();s.devices[0][key]=value;
+    assert.equal(isValidWorkspace(s),false);
+  }
+});
+test('rejects finite but extreme freehand points',()=>{
+  const s=basic();s.wires[0].points=[{x:1e308,y:2}];
+  assert.equal(isValidWorkspace(s),false);
+});
+test('accepts coordinates at the generous safety boundary',()=>{
+  const s=basic();s.view={x:1000000,y:-1000000,w:900,h:480};
+  s.devices[0].x=1000000;s.wires[0].points=[{x:-1000000,y:1000000}];
+  assert.equal(isValidWorkspace(s),true);
+});
