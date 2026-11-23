@@ -4,6 +4,7 @@
 const allowedTypes=new Set(['stop','start','coil','aux']);
 // Keep malformed finite-but-extreme values from producing unusable SVG geometry.
 const MAX_COORDINATE=1000000;
+const MAX_FREEHAND_POINTS=2999;
 const isCoordinate=value=>Number.isFinite(value)&&Math.abs(value)<=MAX_COORDINATE;
 function isValidView(view){
   if(view===undefined)return true; // Version-1 files created before view state was saved remain loadable.
@@ -13,6 +14,16 @@ function isValidView(view){
      view.w<260||view.w>1800||view.h<=0)return false;
   const expectedHeight=view.w*480/900;
   return Math.abs(view.h-expectedHeight)<=Math.max(1e-6,expectedHeight*1e-9);
+}
+function appendFreehandPoint(points,p){
+  // Match the saved-workspace limit so a long live gesture remains loadable.
+  if(!Array.isArray(points)||points.length===0||points.length>=MAX_FREEHAND_POINTS||
+     !p||!isCoordinate(p.x)||!isCoordinate(p.y))return false;
+  const last=points[points.length-1];
+  if(!last||!isCoordinate(last.x)||!isCoordinate(last.y)||
+     Math.hypot(p.x-last.x,p.y-last.y)<=5)return false;
+  points.push({x:Math.round(p.x),y:Math.round(p.y)});
+  return true;
 }
 function isValidWorkspace(saved){
   if(!saved||typeof saved!=='object'||Array.isArray(saved)||saved.version!==1||
@@ -45,7 +56,7 @@ function isValidWorkspace(saved){
   }
   return true;
 }
-const api=Object.freeze({isValidWorkspace});
+const api=Object.freeze({isValidWorkspace,appendFreehandPoint});
 root.SavedCircuitValidation=api;
 if(typeof module!=='undefined'&&module.exports)module.exports=api;
 })(typeof globalThis!=='undefined'?globalThis:this);

@@ -1,7 +1,7 @@
 'use strict';
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {isValidWorkspace}=require('../saved-circuit-validation.js');
+const {isValidWorkspace,appendFreehandPoint}=require('../saved-circuit-validation.js');
 
 const basic=()=>({version:1,devices:[{id:2,type:'start',x:225,y:180},{id:3,type:'coil',x:445,y:180}],wires:[{a:'L1',b:'2:L'},{a:'2:R',b:'3:L'},{a:'3:R',b:'L2'}]});
 const motor=()=>({version:1,devices:[{id:1,type:'stop',x:225,y:180},{id:2,type:'start',x:445,y:180},{id:3,type:'coil',x:705,y:180},{id:4,type:'aux',x:445,y:330}],wires:[{a:'L1',b:'1:L'},{a:'1:R',b:'2:L'},{a:'2:R',b:'3:L'},{a:'3:R',b:'L2'},{a:'1:R',b:'4:L'},{a:'4:R',b:'3:L'}]});
@@ -49,4 +49,25 @@ test('accepts coordinates at the generous safety boundary',()=>{
   const s=basic();s.view={x:1000000,y:-1000000,w:900,h:480};
   s.devices[0].x=1000000;s.wires[0].points=[{x:-1000000,y:1000000}];
   assert.equal(isValidWorkspace(s),true);
+});
+
+test('appends freehand samples only after the existing five-unit spacing threshold',()=>{
+  const points=[{x:0,y:0}];
+  assert.equal(appendFreehandPoint(points,{x:3,y:4}),false);
+  assert.equal(appendFreehandPoint(points,{x:6.4,y:0}),true);
+  assert.deepEqual(points,[{x:0,y:0},{x:6,y:0}]);
+});
+test('caps a freehand gesture at the maximum point count accepted by saved-workspace validation',()=>{
+  const points=Array.from({length:2998},(_,i)=>({x:i,y:0}));
+  assert.equal(appendFreehandPoint(points,{x:3003,y:0}),true);
+  assert.equal(points.length,2999);
+  assert.equal(appendFreehandPoint(points,{x:3010,y:0}),false);
+  const s=basic();s.wires[0].points=points;
+  assert.equal(isValidWorkspace(s),true);
+});
+test('does not append non-finite or out-of-range freehand samples',()=>{
+  const points=[{x:0,y:0}];
+  assert.equal(appendFreehandPoint(points,{x:Infinity,y:10}),false);
+  assert.equal(appendFreehandPoint(points,{x:1000001,y:10}),false);
+  assert.deepEqual(points,[{x:0,y:0}]);
 });
